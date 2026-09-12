@@ -19,10 +19,10 @@ import {
   Quote,
 } from "lucide-react";
 import { Section, SectionHeader, Reveal } from "@/components/site/Section";
-import { ParticleField } from "@/components/three/ParticleField";
 import { GranuleSphere } from "@/components/three/GranuleSphere";
 import { useLead } from "@/lib/lead-context";
 import { industries, productCategories } from "@/data/site";
+import heroVideo from "@/0912.mp4";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -127,16 +127,28 @@ function Home() {
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const textY = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const canvasScale = useTransform(scrollYProgress, [0, 1], [1, 1.25]);
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1.14, 1.3]);
 
   return (
     <div>
       {/* HERO */}
-      <div ref={heroRef} className="relative min-h-[100vh] overflow-hidden bg-[#061523] text-white">
-        <div className="grid-bg absolute inset-0 opacity-20" />
-        <motion.div style={{ scale: canvasScale }} className="absolute inset-0">
-          <ParticleField progress={scrollYProgress} />
+      <div
+        ref={heroRef}
+        className="relative -mt-16 min-h-[100svh] overflow-hidden bg-[#061523] text-white"
+      >
+        <motion.div style={{ scale: videoScale }} className="absolute inset-0">
+          <video
+            className="h-full w-full object-cover"
+            src={heroVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-hidden="true"
+          />
         </motion.div>
+        <div className="pointer-events-none absolute inset-0 bg-[#061523]/55" />
+        <div className="grid-bg pointer-events-none absolute inset-0 opacity-20" />
         <div
           className="pointer-events-none absolute left-1/2 top-1/3 h-[500px] w-[500px] -translate-x-1/2 rounded-full blur-3xl"
           style={{
@@ -146,7 +158,7 @@ function Home() {
         />
         <motion.div
           style={{ y: textY, opacity: textOpacity }}
-          className="relative mx-auto flex min-h-[100vh] max-w-5xl flex-col items-center justify-center px-5 text-center"
+          className="relative mx-auto flex min-h-[100svh] max-w-5xl flex-col items-center justify-center px-5 text-center"
         >
           <span className="chip mb-6 border-cyan-300/30 bg-cyan-300/10 text-cyan-100">
             Sustainable Polymer Engineering
