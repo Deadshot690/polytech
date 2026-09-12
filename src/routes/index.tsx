@@ -22,7 +22,7 @@ import { Section, SectionHeader, Reveal } from "@/components/site/Section";
 import { GranuleSphere } from "@/components/three/GranuleSphere";
 import { useLead } from "@/lib/lead-context";
 import { industries, productCategories } from "@/data/site";
-import heroVideo from "@/0912.mp4";
+import heroVideo from "@/hero.mp4";
 
 export const Route = createFileRoute("/")({
   component: Home,
