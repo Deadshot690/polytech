@@ -7,9 +7,17 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About — Kohinoor Polytech" },
-      { name: "description", content: "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers." },
+      {
+        name: "description",
+        content:
+          "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers.",
+      },
       { property: "og:title", content: "About — Kohinoor Polytech" },
-      { property: "og:description", content: "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers." },
+      {
+        property: "og:description",
+        content:
+          "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers.",
+      },
     ],
   }),
   component: About,
@@ -43,7 +51,14 @@ const infra = [
   { t: "Warehousing", d: "Climate-controlled storage and reliable logistics." },
 ];
 
-const certs = ["ISO 9001:2015", "ISO 14001:2015", "REACH", "RoHS", "EPR Registered", "GRIS Certified"];
+const certs = [
+  "ISO 9001:2015",
+  "ISO 14001:2015",
+  "REACH",
+  "RoHS",
+  "EPR Registered",
+  "GRIS Certified",
+];
 
 const leaders = [
   {
@@ -84,7 +99,10 @@ function About() {
       </Section>
 
       <Section className="border-t border-border">
-        <SectionHeader eyebrow="Our story" title="From a Surat workshop to a national polymer manufacturer." />
+        <SectionHeader
+          eyebrow="Our story"
+          title="From a Surat workshop to a national polymer manufacturer."
+        />
         <div className="mt-10 grid gap-6 md:grid-cols-5">
           {timeline.map((e, i) => (
             <Reveal key={e.y} delay={i * 0.05}>
@@ -116,8 +134,12 @@ function About() {
         <SectionHeader center eyebrow="Certifications" title="Certified quality and compliance." />
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           {certs.map((c) => (
-            <span key={c} className="glass flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium">
-              <Award className="h-4 w-4 text-brand" />{c}
+            <span
+              key={c}
+              className="glass flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium"
+            >
+              <Award className="h-4 w-4 text-brand" />
+              {c}
             </span>
           ))}
         </div>

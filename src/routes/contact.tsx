@@ -13,9 +13,15 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact — Kohinoor Polytech" },
-      { name: "description", content: "Contact our sales desk for quotes, samples and custom compounds." },
+      {
+        name: "description",
+        content: "Contact our sales desk for quotes, samples and custom compounds.",
+      },
       { property: "og:title", content: "Contact — Kohinoor Polytech" },
-      { property: "og:description", content: "Contact our sales desk for quotes, samples and custom compounds." },
+      {
+        property: "og:description",
+        content: "Contact our sales desk for quotes, samples and custom compounds.",
+      },
     ],
   }),
   component: Contact,
@@ -59,7 +65,9 @@ function Contact() {
       const leads = JSON.parse(localStorage.getItem("kp_leads") || "[]");
       leads.push({ ...form, topic, at: new Date().toISOString() });
       localStorage.setItem("kp_leads", JSON.stringify(leads));
-    } catch { /* local-only fallback */ }
+    } catch {
+      /* local-only fallback */
+    }
     const msg = `New ${topic} from ${form.name}%0AEmail: ${form.email}%0APhone: ${form.phone || "-"}%0ACompany: ${form.company || "-"}%0AMessage: ${form.message}`;
     window.open(whatsappUrl(msg), "_blank");
     setSent(true);
@@ -67,7 +75,12 @@ function Contact() {
 
   const details = [
     { icon: Mail, t: "Email", v: CONTACT.email, href: `mailto:${CONTACT.email}` },
-    { icon: Phone, t: "Phone", v: `${CONTACT.phone} / ${CONTACT.phone2}`, href: `tel:${CONTACT.phoneRaw}` },
+    {
+      icon: Phone,
+      t: "Phone",
+      v: `${CONTACT.phone} / ${CONTACT.phone2}`,
+      href: `tel:${CONTACT.phoneRaw}`,
+    },
     { icon: MessageCircle, t: "WhatsApp", v: "Chat with sales", href: whatsappUrl() },
     { icon: Linkedin, t: "LinkedIn", v: "PCR Polymers LLP", href: CONTACT.linkedin },
     { icon: MapPin, t: "Address", v: CONTACT.address, href: mapUrl() },
@@ -87,17 +100,24 @@ function Contact() {
         <div className="mt-12 grid gap-8 lg:grid-cols-2">
           <div className="glass-strong rounded-3xl p-8">
             {sent ? (
-              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center py-12 text-center">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center py-12 text-center"
+              >
                 <CheckCircle2 className="h-14 w-14 text-brand-green" />
                 <h2 className="mt-4 text-2xl font-bold">Message Sent Successfully!</h2>
                 <p className="mt-3 max-w-sm text-muted-foreground">
-                  Thank you for contacting us. We have opened WhatsApp to connect you directly with our sales desk.
+                  Thank you for contacting us. We have opened WhatsApp to connect you directly with
+                  our sales desk.
                 </p>
               </motion.div>
             ) : (
               <>
                 <h2 className="font-display text-xl font-semibold">Send a Message</h2>
-                <p className="mt-1 text-sm text-muted-foreground">Select a category and fill in your project details.</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Select a category and fill in your project details.
+                </p>
                 <div className="mt-5 flex flex-wrap gap-2">
                   {topics.map((t) => (
                     <button
@@ -113,30 +133,58 @@ function Contact() {
                 <form onSubmit={submit} className="mt-6 grid gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="cn">Name</Label>
-                    <Input id="cn" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Your name" />
+                    <Input
+                      id="cn"
+                      value={form.name}
+                      onChange={(e) => set("name", e.target.value)}
+                      placeholder="Your name"
+                    />
                     {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="grid gap-2">
                       <Label htmlFor="ce">Email</Label>
-                      <Input id="ce" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@company.com" />
+                      <Input
+                        id="ce"
+                        value={form.email}
+                        onChange={(e) => set("email", e.target.value)}
+                        placeholder="you@company.com"
+                      />
                       {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
                     </div>
                     <div className="grid gap-2">
                       <Label htmlFor="cp">Phone</Label>
-                      <Input id="cp" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+91 ..." />
+                      <Input
+                        id="cp"
+                        value={form.phone}
+                        onChange={(e) => set("phone", e.target.value)}
+                        placeholder="+91 ..."
+                      />
                     </div>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="cc">Company</Label>
-                    <Input id="cc" value={form.company} onChange={(e) => set("company", e.target.value)} placeholder="Company" />
+                    <Input
+                      id="cc"
+                      value={form.company}
+                      onChange={(e) => set("company", e.target.value)}
+                      placeholder="Company"
+                    />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="cm">Message</Label>
-                    <Textarea id="cm" value={form.message} onChange={(e) => set("message", e.target.value)} placeholder="Tell us about your requirement..." rows={4} />
+                    <Textarea
+                      id="cm"
+                      value={form.message}
+                      onChange={(e) => set("message", e.target.value)}
+                      placeholder="Tell us about your requirement..."
+                      rows={4}
+                    />
                     {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
                   </div>
-                  <button type="submit" className="btn-primary mt-2">Send Message</button>
+                  <button type="submit" className="btn-primary mt-2">
+                    Send Message
+                  </button>
                 </form>
               </>
             )}
@@ -148,7 +196,13 @@ function Contact() {
               <p className="mt-2 text-sm text-muted-foreground">{CONTACT.address}</p>
             </div>
             {details.map((d) => (
-              <a key={d.t} href={d.href} target="_blank" rel="noreferrer" className="glass card-lift flex items-start gap-4 rounded-2xl p-5">
+              <a
+                key={d.t}
+                href={d.href}
+                target="_blank"
+                rel="noreferrer"
+                className="glass card-lift flex items-start gap-4 rounded-2xl p-5"
+              >
                 <d.icon className="mt-0.5 h-6 w-6 text-brand" />
                 <div>
                   <div className="text-xs uppercase tracking-wide text-muted-foreground">{d.t}</div>

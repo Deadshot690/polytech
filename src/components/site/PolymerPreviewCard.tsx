@@ -286,9 +286,7 @@ export function PolymerPreviewCard() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <div className="text-sm font-semibold text-white">
-                      {activeItem.polymerType}
-                    </div>
+                    <div className="text-sm font-semibold text-white">{activeItem.polymerType}</div>
                     <div className="text-xs text-white/70 mt-0.5">{activeItem.grade}</div>
                   </div>
                   <Link

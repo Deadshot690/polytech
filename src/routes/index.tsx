@@ -87,7 +87,6 @@ const reasons = [
   { icon: Headset, t: "Dedicated technical support" },
 ];
 
-
 const mfgStats = [
   { v: "8 Yrs", l: "Years operating" },
   { v: "6,000 MT", l: "Annual production capacity" },

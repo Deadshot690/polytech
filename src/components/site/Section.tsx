@@ -12,7 +12,10 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className={cn("mx-auto w-full max-w-7xl px-5 py-20 md:px-8 md:py-28", className)}>
+    <section
+      id={id}
+      className={cn("mx-auto w-full max-w-7xl px-5 py-20 md:px-8 md:py-28", className)}
+    >
       {children}
     </section>
   );
@@ -44,7 +47,15 @@ export function SectionHeader({
   );
 }
 
-export function Reveal({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
+export function Reveal({
+  children,
+  delay = 0,
+  className,
+}: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}

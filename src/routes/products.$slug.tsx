@@ -25,7 +25,9 @@ export const Route = createFileRoute("/products/$slug")({
     <Section className="pt-32 text-center">
       <h1 className="text-3xl font-bold">Product not found</h1>
       <p className="mt-3 text-muted-foreground">This grade doesn't exist in our catalogue.</p>
-      <Link to="/products" className="btn-primary mt-6">Back to products</Link>
+      <Link to="/products" className="btn-primary mt-6">
+        Back to products
+      </Link>
     </Section>
   ),
 });
@@ -43,7 +45,10 @@ function ProductDetail() {
   return (
     <div>
       <Section className="pt-28">
-        <Link to="/products" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <Link
+          to="/products"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="h-4 w-4" /> Back to products
         </Link>
         <div className="mt-6 grid gap-10 lg:grid-cols-2">
@@ -52,8 +57,12 @@ function ProductDetail() {
             <h1 className="mt-4 text-3xl font-bold md:text-5xl">{product.name}</h1>
             <p className="mt-4 text-muted-foreground">{product.description}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <button onClick={() => openLead(product.name)} className="btn-primary">Request Quote</button>
-              <a href="#specs" className="btn-ghost"><FileText className="h-4 w-4" /> Technical datasheet</a>
+              <button onClick={() => openLead(product.name)} className="btn-primary">
+                Request Quote
+              </button>
+              <a href="#specs" className="btn-ghost">
+                <FileText className="h-4 w-4" /> Technical datasheet
+              </a>
             </div>
             <div className="mt-8 grid grid-cols-3 gap-3">
               {meta.map((m) => (
@@ -85,8 +94,12 @@ function ProductDetail() {
 
         <div className="glass-strong mt-12 rounded-3xl p-8 text-center md:p-12">
           <h2 className="text-2xl font-bold md:text-3xl">Need a sample of {product.name}?</h2>
-          <p className="mt-3 text-muted-foreground">Our technical team will validate the grade for your application.</p>
-          <button onClick={() => openLead(product.name)} className="btn-primary mt-6">Request a sample</button>
+          <p className="mt-3 text-muted-foreground">
+            Our technical team will validate the grade for your application.
+          </p>
+          <button onClick={() => openLead(product.name)} className="btn-primary mt-6">
+            Request a sample
+          </button>
         </div>
       </Section>
     </div>

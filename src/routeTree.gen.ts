@@ -15,10 +15,13 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products.index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
 const SustainabilityRoute = SustainabilityRouteImport.update({
   id: '/sustainability',
@@ -50,6 +53,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -65,22 +73,35 @@ const ProductsIndexRoute = ProductsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProductsRoute,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BlogRoute,
+} as any)
 const ProductsSlugRoute = ProductsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => ProductsRoute,
 } as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/blog/': typeof BlogIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -91,20 +112,25 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/blog': typeof BlogIndexRoute
   '/products': typeof ProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/blog/': typeof BlogIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRouteTypes {
@@ -112,13 +138,16 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/gallery'
     | '/products'
     | '/projects'
     | '/sitemap.xml'
     | '/sustainability'
+    | '/blog/$slug'
     | '/products/$slug'
+    | '/blog/'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -129,25 +158,31 @@ export interface FileRouteTypes {
     | '/projects'
     | '/sitemap.xml'
     | '/sustainability'
+    | '/blog/$slug'
     | '/products/$slug'
+    | '/blog'
     | '/products'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/gallery'
     | '/products'
     | '/projects'
     | '/sitemap.xml'
     | '/sustainability'
+    | '/blog/$slug'
     | '/products/$slug'
+    | '/blog/'
     | '/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  BlogRoute: typeof BlogRouteWithChildren
   ContactRoute: typeof ContactRoute
   GalleryRoute: typeof GalleryRoute
   ProductsRoute: typeof ProductsRouteWithChildren
@@ -200,6 +235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -221,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsIndexRouteImport
       parentRoute: typeof ProductsRoute
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof BlogRoute
+    }
     '/products/$slug': {
       id: '/products/$slug'
       path: '/$slug'
@@ -228,8 +277,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof ProductsRoute
     }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
+    }
   }
 }
+
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+  BlogIndexRoute: typeof BlogIndexRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+  BlogIndexRoute: BlogIndexRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface ProductsRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
@@ -248,6 +316,7 @@ const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  BlogRoute: BlogRouteWithChildren,
   ContactRoute: ContactRoute,
   GalleryRoute: GalleryRoute,
   ProductsRoute: ProductsRouteWithChildren,

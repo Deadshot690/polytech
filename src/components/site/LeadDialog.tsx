@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -19,7 +25,16 @@ const schema = z.object({
   message: z.string().optional(),
 });
 
-const empty = { name: "", email: "", phone: "", company: "", product: "", grade: "", quantity: "", message: "" };
+const empty = {
+  name: "",
+  email: "",
+  phone: "",
+  company: "",
+  product: "",
+  grade: "",
+  quantity: "",
+  message: "",
+};
 
 export function LeadDialog() {
   const { open, product, closeLead } = useLead();
@@ -46,7 +61,9 @@ export function LeadDialog() {
       const leads = JSON.parse(localStorage.getItem("kp_leads") || "[]");
       leads.push({ ...parsed.data, at: new Date().toISOString() });
       localStorage.setItem("kp_leads", JSON.stringify(leads));
-    } catch { /* local-only fallback */ }
+    } catch {
+      /* local-only fallback */
+    }
 
     const msg = `New inquiry from ${form.name}%0AEmail: ${form.email}%0APhone: ${form.phone}%0ACompany: ${form.company || "-"}%0AProduct: ${form.product || "-"}%0AGrade: ${form.grade || "-"}%0AQuantity: ${form.quantity || "-"}%0AMessage: ${form.message || "-"}`;
     window.open(whatsappUrl(msg), "_blank");
@@ -59,30 +76,52 @@ export function LeadDialog() {
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Request a Quote</DialogTitle>
-          <DialogDescription>Tell us about your project and we'll get back to you shortly.</DialogDescription>
+          <DialogDescription>
+            Tell us about your project and we'll get back to you shortly.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="ln">Name</Label>
-            <Input id="ln" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Full name" />
+            <Input
+              id="ln"
+              value={form.name}
+              onChange={(e) => set("name", e.target.value)}
+              placeholder="Full name"
+            />
             {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="le">Email</Label>
-              <Input id="le" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@company.com" />
+              <Input
+                id="le"
+                value={form.email}
+                onChange={(e) => set("email", e.target.value)}
+                placeholder="you@company.com"
+              />
               {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
             </div>
             <div className="grid gap-2">
               <Label htmlFor="lp">Phone</Label>
-              <Input id="lp" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+91 ..." />
+              <Input
+                id="lp"
+                value={form.phone}
+                onChange={(e) => set("phone", e.target.value)}
+                placeholder="+91 ..."
+              />
               {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="lc">Company</Label>
-              <Input id="lc" value={form.company} onChange={(e) => set("company", e.target.value)} placeholder="Company" />
+              <Input
+                id="lc"
+                value={form.company}
+                onChange={(e) => set("company", e.target.value)}
+                placeholder="Company"
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="lpr">Product</Label>
@@ -94,7 +133,9 @@ export function LeadDialog() {
               >
                 <option value="">Select product</option>
                 {products.map((p) => (
-                  <option key={p.slug} value={p.name}>{p.name}</option>
+                  <option key={p.slug} value={p.name}>
+                    {p.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -102,18 +143,36 @@ export function LeadDialog() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="lg">Grade</Label>
-              <Input id="lg" value={form.grade} onChange={(e) => set("grade", e.target.value)} placeholder="Grade / MFI" />
+              <Input
+                id="lg"
+                value={form.grade}
+                onChange={(e) => set("grade", e.target.value)}
+                placeholder="Grade / MFI"
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="lq">Quantity</Label>
-              <Input id="lq" value={form.quantity} onChange={(e) => set("quantity", e.target.value)} placeholder="e.g. 5 T / month" />
+              <Input
+                id="lq"
+                value={form.quantity}
+                onChange={(e) => set("quantity", e.target.value)}
+                placeholder="e.g. 5 T / month"
+              />
             </div>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="lm">Message</Label>
-            <Textarea id="lm" value={form.message} onChange={(e) => set("message", e.target.value)} placeholder="Application details..." rows={3} />
+            <Textarea
+              id="lm"
+              value={form.message}
+              onChange={(e) => set("message", e.target.value)}
+              placeholder="Application details..."
+              rows={3}
+            />
           </div>
-          <button type="submit" className="btn-primary mt-2">Send inquiry</button>
+          <button type="submit" className="btn-primary mt-2">
+            Send inquiry
+          </button>
         </form>
       </DialogContent>
     </Dialog>

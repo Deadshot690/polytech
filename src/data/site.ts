@@ -136,7 +136,11 @@ export const industries: Industry[] = [
     slug: "automotive",
     name: "Automotive",
     blurb: "Impact-grade copolymers for interior and under-hood components.",
-    challenges: ["Low-temperature impact resistance", "Dimensional stability", "Consistent surface finish"],
+    challenges: [
+      "Low-temperature impact resistance",
+      "Dimensional stability",
+      "Consistent surface finish",
+    ],
     solutions: ["Impact-modified PPCP grades", "In-line MFI monitoring", "Custom colour matching"],
     grades: ["PPCP Impact Grade — Black", "Custom Compound — Glass Filled"],
     caseStudy: {
@@ -218,12 +222,14 @@ export const CONTACT = {
   phone2: "+91 8675278692",
   phoneRaw: "919033118051",
   phoneRaw2: "918675278692",
-  address: "Plot No. 111-114, Tasnim Nagar, Unn Industrial Estate, behind Sanabil Bakery, Sachin Naka, Surat - 394210, Gujarat",
+  address:
+    "Plot No. 111-114, Tasnim Nagar, Unn Industrial Estate, behind Sanabil Bakery, Sachin Naka, Surat - 394210, Gujarat",
   linkedin: "https://www.linkedin.com/company/pcrpolymersllp/",
 };
 
-export const whatsappUrl = (msg = "Hello Kohinoor Polytech, I'd like to inquire about your products.") =>
-  `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(msg)}`;
+export const whatsappUrl = (
+  msg = "Hello Kohinoor Polytech, I'd like to inquire about your products.",
+) => `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(msg)}`;
 
 export const mapUrl = () =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.address)}`;

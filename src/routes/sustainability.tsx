@@ -7,9 +7,15 @@ export const Route = createFileRoute("/sustainability")({
   head: () => ({
     meta: [
       { title: "Sustainability — Kohinoor Polytech" },
-      { name: "description", content: "Engineering a circular polymer economy with measurable environmental impact." },
+      {
+        name: "description",
+        content: "Engineering a circular polymer economy with measurable environmental impact.",
+      },
       { property: "og:title", content: "Sustainability — Kohinoor Polytech" },
-      { property: "og:description", content: "Engineering a circular polymer economy with measurable environmental impact." },
+      {
+        property: "og:description",
+        content: "Engineering a circular polymer economy with measurable environmental impact.",
+      },
     ],
   }),
   component: Sustainability,
@@ -33,7 +39,11 @@ const stages = [
 function Sustainability() {
   return (
     <div>
-      <PageHero eyebrow="Sustainability" title="Engineering a circular polymer economy." subtitle="Turning plastic waste into premium industrial compounds — measured, verified and reported." />
+      <PageHero
+        eyebrow="Sustainability"
+        title="Engineering a circular polymer economy."
+        subtitle="Turning plastic waste into premium industrial compounds — measured, verified and reported."
+      />
       <Section>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {stats.map((s) => (
@@ -46,7 +56,11 @@ function Sustainability() {
       </Section>
 
       <Section className="border-t border-border">
-        <SectionHeader center eyebrow="Circular process" title="Closing the loop, stage by stage." />
+        <SectionHeader
+          center
+          eyebrow="Circular process"
+          title="Closing the loop, stage by stage."
+        />
         <div className="mt-10 grid gap-4 md:grid-cols-5">
           {stages.map((s, i) => (
             <Reveal key={s} delay={i * 0.05}>
@@ -61,8 +75,12 @@ function Sustainability() {
 
       <Section className="border-t border-border">
         <div className="glass-strong rounded-3xl p-10 text-center md:p-16">
-          <h2 className="text-3xl font-bold md:text-4xl">Our commitment to net-zero manufacturing by 2040.</h2>
-          <Link to="/contact" className="btn-accent mt-8">Partner with us</Link>
+          <h2 className="text-3xl font-bold md:text-4xl">
+            Our commitment to net-zero manufacturing by 2040.
+          </h2>
+          <Link to="/contact" className="btn-accent mt-8">
+            Partner with us
+          </Link>
         </div>
       </Section>
     </div>

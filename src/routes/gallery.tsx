@@ -40,16 +40,7 @@ export function Gallery() {
   const [category, setCategory] = useState<string>("All");
   const [search, setSearch] = useState<string>("");
 
-  const categories = [
-    "All",
-    "Green",
-    "Silver",
-    "Dark Grey",
-    "Black",
-    "Natural",
-    "Amber",
-    "Blue",
-  ];
+  const categories = ["All", "Green", "Silver", "Dark Grey", "Black", "Natural", "Amber", "Blue"];
 
   const filtered = galleryItems.filter((item) => {
     const matchesCat = category === "All" || item.category === category;
@@ -62,7 +53,7 @@ export function Gallery() {
   });
 
   const activeItem: GalleryItem | null =
-    selectedIdx !== null ? filtered[selectedIdx] ?? null : null;
+    selectedIdx !== null ? (filtered[selectedIdx] ?? null) : null;
 
   const handlePrev = useCallback(() => {
     if (selectedIdx === null || filtered.length === 0) return;
@@ -191,9 +182,7 @@ export function Gallery() {
                   <div className="font-display text-sm font-semibold text-white group-hover:text-brand-cyan transition-colors">
                     {item.title}
                   </div>
-                  <div className="mt-0.5 text-[11px] text-slate-300">
-                    {item.category} Polymer
-                  </div>
+                  <div className="mt-0.5 text-[11px] text-slate-300">{item.category} Polymer</div>
                 </div>
               </div>
             </Reveal>
@@ -244,9 +233,7 @@ export function Gallery() {
                   <h3 className="font-display text-sm font-semibold text-white sm:text-base">
                     {activeItem.title}
                   </h3>
-                  <p className="text-xs text-slate-400">
-                    {activeItem.category} Polymer
-                  </p>
+                  <p className="text-xs text-slate-400">{activeItem.category} Polymer</p>
                 </div>
               </div>
 
