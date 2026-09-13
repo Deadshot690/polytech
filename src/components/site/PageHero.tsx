@@ -17,11 +17,17 @@ export function PageHero({
       <div className="grid-bg absolute inset-0 opacity-40" />
       <div
         className="pointer-events-none absolute -top-32 left-1/4 h-96 w-96 rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--brand) 40%, transparent), transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, color-mix(in oklab, var(--brand) 40%, transparent), transparent 70%)",
+        }}
       />
       <div
         className="pointer-events-none absolute -bottom-32 right-1/4 h-96 w-96 rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, color-mix(in oklab, var(--brand-green) 35%, transparent), transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, color-mix(in oklab, var(--brand-green) 35%, transparent), transparent 70%)",
+        }}
       />
       <div className="relative mx-auto max-w-7xl px-5 py-28 md:px-8 md:py-36">
         <motion.div

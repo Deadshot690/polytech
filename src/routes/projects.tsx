@@ -6,9 +6,15 @@ export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
       { title: "Projects — Kohinoor Polytech" },
-      { name: "description", content: "Case studies showing measurable results across industries." },
+      {
+        name: "description",
+        content: "Case studies showing measurable results across industries.",
+      },
       { property: "og:title", content: "Projects — Kohinoor Polytech" },
-      { property: "og:description", content: "Case studies showing measurable results across industries." },
+      {
+        property: "og:description",
+        content: "Case studies showing measurable results across industries.",
+      },
     ],
   }),
   component: Projects,
@@ -44,7 +50,11 @@ const cases = [
 function Projects() {
   return (
     <div>
-      <PageHero eyebrow="Projects" title="Results that speak for themselves." subtitle="Real-world case studies across the industries we serve." />
+      <PageHero
+        eyebrow="Projects"
+        title="Results that speak for themselves."
+        subtitle="Real-world case studies across the industries we serve."
+      />
       <Section>
         <div className="grid gap-4 md:grid-cols-2">
           {cases.map((c, i) => (
@@ -52,9 +62,18 @@ function Projects() {
               <div className="glass card-lift h-full rounded-2xl p-6">
                 <div className="font-display text-lg font-semibold">{c.title}</div>
                 <div className="mt-4 space-y-3 text-sm">
-                  <p><span className="font-semibold text-brand">Problem: </span><span className="text-muted-foreground">{c.problem}</span></p>
-                  <p><span className="font-semibold text-brand">Solution: </span><span className="text-muted-foreground">{c.solution}</span></p>
-                  <p><span className="font-semibold text-brand-green">Result: </span><span className="text-muted-foreground">{c.result}</span></p>
+                  <p>
+                    <span className="font-semibold text-brand">Problem: </span>
+                    <span className="text-muted-foreground">{c.problem}</span>
+                  </p>
+                  <p>
+                    <span className="font-semibold text-brand">Solution: </span>
+                    <span className="text-muted-foreground">{c.solution}</span>
+                  </p>
+                  <p>
+                    <span className="font-semibold text-brand-green">Result: </span>
+                    <span className="text-muted-foreground">{c.result}</span>
+                  </p>
                 </div>
               </div>
             </Reveal>

@@ -37,6 +37,7 @@ The project combines modern frontend technologies with interactive animations, 3
 ## Tech Stack
 
 ### Frontend
+
 - React
 - TypeScript
 - TanStack Start
@@ -48,6 +49,7 @@ The project combines modern frontend technologies with interactive animations, 3
 - React Query
 
 ### Development
+
 - ESLint
 - Prettier
 - Bun / npm

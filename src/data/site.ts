@@ -1,4 +1,4 @@
-export type ProductCategory = "PPHP" | "PPCP" | "Compound" | "Masterbatch";
+export type ProductCategory = "PPHP" | "PPCP" | "Compound" | "HDPE";
 
 export interface Product {
   slug: string;
@@ -85,25 +85,40 @@ export const products: Product[] = [
     specs: baseSpecs("8 g/10min", "1.13 g/cm³"),
   },
   {
-    slug: "masterbatch-colour-cyan",
-    name: "Colour Masterbatch — Cyan",
-    category: "Masterbatch",
-    tag: "Masterbatch / Colour",
+    slug: "pcr-hdpe-granules",
+    name: "PCR HDPE Granules",
+    category: "HDPE",
+    tag: "PCR HDPE",
     description:
-      "High-loading colour masterbatch for precise, repeatable colour matching across polypropylene grades.",
-    application: "Colour dosing",
-    color: "Cyan",
-    form: "Pellet",
-    specs: baseSpecs("22 g/10min", "1.2 g/cm³"),
+      "High-density polyethylene granules engineered from recycled streams, suitable for blow moulding, pipe extrusion and industrial containers.",
+    application: "Blow moulding & extrusion",
+    color: "Natural / Black",
+    form: "Granule",
+    specs: baseSpecs("0.35 g/10min", "0.952 g/cm³"),
   },
 ];
 
 export const productCategories = [
-  { name: "PP Homopolymer (PPHP)", key: "PPHP", desc: "Stiff, high-purity homopolymer grades for injection, raffia and extrusion." },
-  { name: "PP Copolymer (PPCP)", key: "PPCP", desc: "Impact-resistant copolymer grades for automotive and packaging." },
-  { name: "Custom Compounds", key: "Compound", desc: "Filled and reinforced compounds engineered to your specification." },
-  { name: "Color Masterbatch", key: "Masterbatch", desc: "Precision colour masterbatch for repeatable results." },
-  { name: "Custom Colors", key: "Masterbatch", desc: "Bespoke colour development to match your brand or part." },
+  {
+    name: "PCR PP Homopolymer (PCR PPHP)",
+    key: "PPHP",
+    desc: "Stiff, high-purity homopolymer grades for injection moulding, raffia and extrusion.",
+  },
+  {
+    name: "PCR PP Copolymer (PCR PPCP)",
+    key: "PPCP",
+    desc: "Impact-resistant copolymer grades for automotive and packaging applications.",
+  },
+  {
+    name: "PCR HDPE",
+    key: "HDPE",
+    desc: "High-density polyethylene grades for blow moulding, extrusion, and industrial packaging.",
+  },
+  {
+    name: "Customized Compounds",
+    key: "Compound",
+    desc: "Filled and reinforced compounds custom engineered to your exact specifications.",
+  },
 ];
 
 export interface Industry {
@@ -121,7 +136,11 @@ export const industries: Industry[] = [
     slug: "automotive",
     name: "Automotive",
     blurb: "Impact-grade copolymers for interior and under-hood components.",
-    challenges: ["Low-temperature impact resistance", "Dimensional stability", "Consistent surface finish"],
+    challenges: [
+      "Low-temperature impact resistance",
+      "Dimensional stability",
+      "Consistent surface finish",
+    ],
     solutions: ["Impact-modified PPCP grades", "In-line MFI monitoring", "Custom colour matching"],
     grades: ["PPCP Impact Grade — Black", "Custom Compound — Glass Filled"],
     caseStudy: {
@@ -198,14 +217,19 @@ export const industries: Industry[] = [
 ];
 
 export const CONTACT = {
-  email: "sales@kohinoorpolytech.com",
-  phone: "+91 9033786017",
-  phoneRaw: "919033786017",
-  address: "Kim Station Road, Mota Borasara, Kim 394110, Surat, Gujarat, India",
+  email: "info@kpolytech.in",
+  phone: "+91 9033118051",
+  phone2: "+91 8675278692",
+  phoneRaw: "919033118051",
+  phoneRaw2: "918675278692",
+  address:
+    "Plot No. 111-114, Tasnim Nagar, Unn Industrial Estate, behind Sanabil Bakery, Sachin Naka, Surat - 394210, Gujarat",
+  linkedin: "https://www.linkedin.com/company/pcrpolymersllp/",
 };
 
-export const whatsappUrl = (msg = "Hello Kohinoor Polytech, I'd like to inquire about your products.") =>
-  `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(msg)}`;
+export const whatsappUrl = (
+  msg = "Hello Kohinoor Polytech, I'd like to inquire about your products.",
+) => `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(msg)}`;
 
 export const mapUrl = () =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.address)}`;

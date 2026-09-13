@@ -10,6 +10,7 @@ const links = [
   { to: "/products", label: "Products" },
   { to: "/projects", label: "Projects" },
   { to: "/gallery", label: "Gallery" },
+  { to: "/blog", label: "Blog" },
   { to: "/contact", label: "Contact" },
 ];
 
@@ -45,7 +46,9 @@ export function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
-      <div className={`transition-all duration-300 ${scrolled ? "glass-strong" : "bg-transparent"}`}>
+      <div
+        className={`transition-all duration-300 ${scrolled ? "glass-strong" : "bg-transparent"}`}
+      >
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 md:px-8">
           <Link to="/" className="flex items-center gap-2.5">
             <img src={logo} alt="Kohinoor Polytech" width={36} height={36} className="h-9 w-9" />
@@ -86,7 +89,10 @@ export function Navbar() {
             </button>
           </div>
         </nav>
-        <motion.div className="h-0.5 origin-left bg-gradient-to-r from-brand via-brand-2 to-brand-green" style={{ scaleX: progress }} />
+        <motion.div
+          className="h-0.5 origin-left bg-gradient-to-r from-brand via-brand-2 to-brand-green"
+          style={{ scaleX: progress }}
+        />
       </div>
 
       <AnimatePresence>
