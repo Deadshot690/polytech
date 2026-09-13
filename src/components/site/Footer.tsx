@@ -5,10 +5,10 @@ import logo from "/Assets/logo_transparent_blue.png";
 import { CONTACT, whatsappUrl, mapUrl } from "@/data/site";
 
 const social = [
-  { icon: Linkedin, label: "LinkedIn" },
-  { icon: Twitter, label: "Twitter" },
-  { icon: Youtube, label: "YouTube" },
-  { icon: Instagram, label: "Instagram" },
+  { icon: Linkedin, label: "LinkedIn", href: CONTACT.linkedin },
+  { icon: Twitter, label: "Twitter", href: "#" },
+  { icon: Youtube, label: "YouTube", href: "#" },
+  { icon: Instagram, label: "Instagram", href: "#" },
 ];
 
 export function Footer() {
@@ -44,7 +44,9 @@ export function Footer() {
             {social.map((s) => (
               <a
                 key={s.label}
-                href="#"
+                href={s.href}
+                target={s.href !== "#" ? "_blank" : undefined}
+                rel="noreferrer"
                 aria-label={s.label}
                 className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:text-foreground"
               >
@@ -60,7 +62,6 @@ export function Footer() {
             <li><Link to="/about" className="hover:text-foreground">About</Link></li>
             <li><Link to="/projects" className="hover:text-foreground">Projects</Link></li>
             <li><Link to="/gallery" className="hover:text-foreground">Gallery</Link></li>
-            <li><Link to="/blog" className="hover:text-foreground">Insights</Link></li>
             <li><Link to="/sustainability" className="hover:text-foreground">Sustainability</Link></li>
           </ul>
         </div>
@@ -69,7 +70,6 @@ export function Footer() {
           <h4 className="font-display text-sm font-semibold">Products</h4>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/products" className="hover:text-foreground">Catalogue</Link></li>
-            <li><Link to="/industries" className="hover:text-foreground">Industries</Link></li>
             <li><Link to="/contact" className="hover:text-foreground">Request a quote</Link></li>
           </ul>
         </div>
@@ -78,8 +78,12 @@ export function Footer() {
           <h4 className="font-display text-sm font-semibold">Contact</h4>
           <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
             <li><a href={`mailto:${CONTACT.email}`} className="hover:text-foreground">{CONTACT.email}</a></li>
-            <li><a href={`tel:${CONTACT.phoneRaw}`} className="hover:text-foreground">{CONTACT.phone}</a></li>
+            <li>
+              <a href={`tel:${CONTACT.phoneRaw}`} className="hover:text-foreground">{CONTACT.phone}</a> /{" "}
+              <a href={`tel:${CONTACT.phoneRaw2}`} className="hover:text-foreground">{CONTACT.phone2}</a>
+            </li>
             <li><a href={mapUrl()} target="_blank" rel="noreferrer" className="hover:text-foreground">{CONTACT.address}</a></li>
+            <li><a href={CONTACT.linkedin} target="_blank" rel="noreferrer" className="hover:text-foreground">LinkedIn Company Profile</a></li>
             <li><a href={whatsappUrl()} target="_blank" rel="noreferrer" className="hover:text-foreground">WhatsApp us</a></li>
           </ul>
         </div>

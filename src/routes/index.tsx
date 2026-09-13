@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Gauge,
   Palette,
+  Layers,
   Truck,
   Factory,
   Sparkles,
@@ -19,7 +20,7 @@ import {
   Quote,
 } from "lucide-react";
 import { Section, SectionHeader, Reveal } from "@/components/site/Section";
-import { GranuleSphere } from "@/components/three/GranuleSphere";
+import { PolymerPreviewCard } from "@/components/site/PolymerPreviewCard";
 import { useLead } from "@/lib/lead-context";
 import { industries, productCategories } from "@/data/site";
 import heroVideo from "@/hero.mp4";
@@ -29,17 +30,17 @@ export const Route = createFileRoute("/")({
 });
 
 const stats = [
-  { v: "12+", l: "Years of expertise" },
-  { v: "20k T", l: "Annual capacity" },
-  { v: "60+", l: "Polymer grades" },
-  { v: "7", l: "Industries served" },
+  { v: "8 Yrs", l: "Years of expertise" },
+  { v: "6k MT", l: "Annual capacity" },
+  { v: "25+", l: "Polymer grades" },
+  { v: "6", l: "Industries served" },
 ];
 
 const features = [
-  { icon: Boxes, t: "Homopolymer", s: "PPHP" },
-  { icon: Recycle, t: "Copolymer", s: "PPCP" },
-  { icon: FlaskConical, t: "Compounds", s: "Custom" },
-  { icon: Palette, t: "Masterbatch", s: "Colour" },
+  { icon: Boxes, t: "Homopolymer", s: "PCR PPHP" },
+  { icon: Recycle, t: "Copolymer", s: "PCR PPCP" },
+  { icon: Layers, t: "HDPE", s: "PCR HDPE" },
+  { icon: FlaskConical, t: "Customized Compounds", s: "PCR Compounds" },
 ];
 
 const loopSteps = [
@@ -61,12 +62,12 @@ const loopSteps = [
   {
     n: "04",
     t: "Granule Production",
-    d: "Twin-screw extrusion yields uniform pellets with controlled MFI.",
+    d: "Two Stage Extruder yields uniform pellets with controlled MFI.",
   },
   {
     n: "05",
     t: "Manufacturing",
-    d: "Granules ship to OEMs and converters across seven industries.",
+    d: "Granules ship to OEMs and converters across six industries.",
   },
   {
     n: "06",
@@ -86,24 +87,13 @@ const reasons = [
   { icon: Headset, t: "Dedicated technical support" },
 ];
 
-const swatches = [
-  { name: "Blue", hex: "#2563eb" },
-  { name: "Green", hex: "#22c55e" },
-  { name: "Red", hex: "#ef4444" },
-  { name: "Orange", hex: "#f97316" },
-  { name: "Maroon", hex: "#7f1d1d" },
-  { name: "White", hex: "#f5f5f5" },
-  { name: "Black", hex: "#1a1a1a" },
-  { name: "Cyan", hex: "#06b6d4" },
-  { name: "Yellow", hex: "#eab308" },
-];
 
 const mfgStats = [
-  { v: "12+", l: "Years operating" },
-  { v: "20,000 T", l: "Annual production capacity" },
-  { v: "60+", l: "Product variants" },
-  { v: "7", l: "Industries served" },
-  { v: "250+", l: "Active clients" },
+  { v: "8 Yrs", l: "Years operating" },
+  { v: "6,000 MT", l: "Annual production capacity" },
+  { v: "25+", l: "Product variants" },
+  { v: "6", l: "Industries served" },
+  { v: "110+", l: "Active clients" },
 ];
 
 const susStats = [
@@ -122,8 +112,6 @@ const testimonials = [
 function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { openLead } = useLead();
-  const [sphereColor, setSphereColor] = useState("#2563eb");
-
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const textY = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
@@ -203,7 +191,7 @@ function Home() {
             <SectionHeader
               eyebrow="Who we are"
               title="A polymer engineering company built around the circular economy."
-              subtitle="Kohinoor Polytech converts post-consumer and post-industrial polypropylene into premium PPHP, PPCP and custom-engineered compounds. Every batch is validated for MFI stability, impurity control and colour consistency before it leaves our plant."
+              subtitle="Kohinoor Polytech converts post-consumer and post-industrial polymers into premium PPHP, PPCP, HDPE and customized compounds. Every batch is validated for MFI stability, impurity control and colour consistency before it leaves our plant."
             />
             <div className="mt-8 grid grid-cols-2 gap-3">
               {features.map((f) => (
@@ -216,28 +204,7 @@ function Home() {
             </div>
           </div>
           <Reveal>
-            <div className="glass-strong rounded-3xl p-4">
-              <div className="mb-3 flex items-center justify-between px-2">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Interactive 3D Preview
-                </span>
-              </div>
-              <div className="h-[340px] rounded-2xl bg-secondary/40">
-                <GranuleSphere color={sphereColor} />
-              </div>
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
-                {swatches.map((s) => (
-                  <button
-                    key={s.name}
-                    aria-label={s.name}
-                    title={s.name}
-                    onClick={() => setSphereColor(s.hex)}
-                    className={`h-7 w-7 rounded-full border-2 transition-transform hover:scale-110 ${sphereColor === s.hex ? "border-foreground" : "border-transparent"}`}
-                    style={{ backgroundColor: s.hex }}
-                  />
-                ))}
-              </div>
-            </div>
+            <PolymerPreviewCard />
           </Reveal>
         </div>
       </Section>
@@ -247,8 +214,8 @@ function Home() {
         <SectionHeader
           center
           eyebrow="The circular economy"
-          title="From waste stream to premium granule."
-          subtitle="Our closed-loop process turns discarded polypropylene into industrial-grade material — verified at every stage."
+          title="From waste stream to premium granules"
+          subtitle="Our closed-loop process turns discarded polymers into industrial-grade material — verified at every stage."
         />
         <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {loopSteps.map((s, i) => (
@@ -265,7 +232,7 @@ function Home() {
 
       {/* WHY KOHINOOR */}
       <Section className="border-t border-border">
-        <SectionHeader center eyebrow="Why Kohinoor" title="Eight reasons converters choose us." />
+        <SectionHeader center eyebrow="Why Kohinoor" title="Eight reasons to choose us." />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {reasons.map((r, i) => (
             <Reveal key={r.t} delay={i * 0.04}>
@@ -284,16 +251,20 @@ function Home() {
           eyebrow="Product categories"
           title="Engineered polymer ranges for every application."
         />
-        <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {productCategories.slice(0, 3).map((c, i) => (
-            <Reveal key={c.name} delay={i * 0.05}>
-              <div className="glass card-lift h-full rounded-2xl p-6">
-                <Boxes className="h-6 w-6 text-brand" />
-                <div className="mt-3 font-display text-lg font-semibold">{c.name}</div>
-                <p className="mt-2 text-sm text-muted-foreground">{c.desc}</p>
-              </div>
-            </Reveal>
-          ))}
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {productCategories.slice(0, 4).map((c, i) => {
+            const icons = [Boxes, Recycle, Layers, FlaskConical];
+            const Icon = icons[i % icons.length];
+            return (
+              <Reveal key={c.name} delay={i * 0.05}>
+                <div className="glass card-lift h-full rounded-2xl p-6">
+                  <Icon className="h-6 w-6 text-brand" />
+                  <div className="mt-3 font-display text-lg font-semibold">{c.name}</div>
+                  <p className="mt-2 text-sm text-muted-foreground">{c.desc}</p>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
         <div className="mt-8">
           <Link to="/products" className="btn-primary">
@@ -304,19 +275,15 @@ function Home() {
 
       {/* INDUSTRIES */}
       <Section className="border-t border-border">
-        <SectionHeader center eyebrow="Industries served" title="Trusted across seven verticals." />
+        <SectionHeader center eyebrow="Industries served" title="Trusted across six verticals." />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {industries.map((ind, i) => (
             <Reveal key={ind.slug} delay={i * 0.04}>
-              <Link
-                to="/industries/$slug"
-                params={{ slug: ind.slug }}
-                className="glass card-lift block h-full rounded-2xl p-6"
-              >
+              <div className="glass card-lift block h-full rounded-2xl p-6">
                 <Factory className="h-6 w-6 text-brand" />
                 <div className="mt-3 font-display text-lg font-semibold">{ind.name}</div>
                 <p className="mt-2 text-sm text-muted-foreground">{ind.blurb}</p>
-              </Link>
+              </div>
             </Reveal>
           ))}
         </div>
@@ -327,7 +294,7 @@ function Home() {
         <SectionHeader
           eyebrow="Manufacturing excellence"
           title="A factory engineered for precision and scale."
-          subtitle="Twin-screw extrusion lines, in-line MFI monitoring and a fully equipped polymer lab — operating around the clock with stringent QC checkpoints."
+          subtitle="Two Stage Extruder lines, in-line MFI monitoring and a fully equipped polymer lab — operating around the clock with stringent QC checkpoints."
         />
         <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-5">
           {mfgStats.map((s) => (

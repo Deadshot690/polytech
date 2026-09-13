@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, ArrowRight, Boxes } from "lucide-react";
+import { Search, ArrowRight, Boxes, Recycle, FlaskConical, Layers } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { Section, SectionHeader, Reveal } from "@/components/site/Section";
 import { Input } from "@/components/ui/input";
@@ -10,15 +10,15 @@ export const Route = createFileRoute("/products/")({
   head: () => ({
     meta: [
       { title: "Products — Kohinoor Polytech" },
-      { name: "description", content: "Engineered PPHP and PPCP granules in a comprehensive colour and grade palette." },
+      { name: "description", content: "Engineered PCR PPHP, PCR PPCP, customized compounds and PCR HDPE granules." },
       { property: "og:title", content: "Products — Kohinoor Polytech" },
-      { property: "og:description", content: "Engineered PPHP and PPCP granules in a comprehensive colour and grade palette." },
+      { property: "og:description", content: "Engineered PCR PPHP, PCR PPCP, customized compounds and PCR HDPE granules." },
     ],
   }),
   component: Products,
 });
 
-const filters = ["All", "PPHP", "PPCP"] as const;
+const filters = ["All", "PPHP", "PPCP", "Compound", "HDPE"] as const;
 
 function Products() {
   const [filter, setFilter] = useState<(typeof filters)[number]>("All");
@@ -28,26 +28,31 @@ function Products() {
     (p) => (filter === "All" || p.category === filter) && p.name.toLowerCase().includes(q.toLowerCase()),
   );
 
+  const categoryIcons = [Boxes, Recycle, Layers, FlaskConical];
+
   return (
     <div>
       <PageHero
         eyebrow="Products"
         title="Premium polymer product range."
-        subtitle="Engineered PPHP and PPCP granules in a comprehensive colour and grade palette."
+        subtitle="Engineered PCR PPHP, PCR PPCP, customized compounds and PCR HDPE granules."
       />
 
       <Section>
         <SectionHeader eyebrow="Product categories" title="Ranges for every application." />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {productCategories.map((c, i) => (
-            <Reveal key={c.name} delay={i * 0.05}>
-              <div className="glass card-lift h-full rounded-2xl p-6">
-                <Boxes className="h-6 w-6 text-brand" />
-                <div className="mt-3 font-display text-lg font-semibold">{c.name}</div>
-                <p className="mt-2 text-sm text-muted-foreground">{c.desc}</p>
-              </div>
-            </Reveal>
-          ))}
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {productCategories.map((c, i) => {
+            const Icon = categoryIcons[i % categoryIcons.length];
+            return (
+              <Reveal key={c.name} delay={i * 0.05}>
+                <div className="glass card-lift h-full rounded-2xl p-6">
+                  <Icon className="h-6 w-6 text-brand" />
+                  <div className="mt-3 font-display text-lg font-semibold">{c.name}</div>
+                  <p className="mt-2 text-sm text-muted-foreground">{c.desc}</p>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
       </Section>
 

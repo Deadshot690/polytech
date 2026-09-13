@@ -13,16 +13,12 @@ import { Route as SustainabilityRouteImport } from './routes/sustainability'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProductsRouteImport } from './routes/products'
-import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products.index'
-import { Route as IndustriesIndexRouteImport } from './routes/industries.index'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
-import { Route as IndustriesSlugRouteImport } from './routes/industries.$slug'
 
 const SustainabilityRoute = SustainabilityRouteImport.update({
   id: '/sustainability',
@@ -44,11 +40,6 @@ const ProductsRoute = ProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndustriesRoute = IndustriesRouteImport.update({
-  id: '/industries',
-  path: '/industries',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
@@ -57,11 +48,6 @@ const GalleryRoute = GalleryRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -79,67 +65,46 @@ const ProductsIndexRoute = ProductsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ProductsRoute,
 } as any)
-const IndustriesIndexRoute = IndustriesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => IndustriesRoute,
-} as any)
 const ProductsSlugRoute = ProductsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => ProductsRoute,
 } as any)
-const IndustriesSlugRoute = IndustriesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => IndustriesRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
-  '/industries': typeof IndustriesRouteWithChildren
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
-  '/industries/$slug': typeof IndustriesSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
-  '/industries/': typeof IndustriesIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
-  '/industries/$slug': typeof IndustriesSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
-  '/industries': typeof IndustriesIndexRoute
   '/products': typeof ProductsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
-  '/industries': typeof IndustriesRouteWithChildren
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
-  '/industries/$slug': typeof IndustriesSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
-  '/industries/': typeof IndustriesIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRouteTypes {
@@ -147,57 +112,44 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/blog'
     | '/contact'
     | '/gallery'
-    | '/industries'
     | '/products'
     | '/projects'
     | '/sitemap.xml'
     | '/sustainability'
-    | '/industries/$slug'
     | '/products/$slug'
-    | '/industries/'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/blog'
     | '/contact'
     | '/gallery'
     | '/projects'
     | '/sitemap.xml'
     | '/sustainability'
-    | '/industries/$slug'
     | '/products/$slug'
-    | '/industries'
     | '/products'
   id:
     | '__root__'
     | '/'
     | '/about'
-    | '/blog'
     | '/contact'
     | '/gallery'
-    | '/industries'
     | '/products'
     | '/projects'
     | '/sitemap.xml'
     | '/sustainability'
-    | '/industries/$slug'
     | '/products/$slug'
-    | '/industries/'
     | '/products/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  BlogRoute: typeof BlogRoute
   ContactRoute: typeof ContactRoute
   GalleryRoute: typeof GalleryRoute
-  IndustriesRoute: typeof IndustriesRouteWithChildren
   ProductsRoute: typeof ProductsRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -234,13 +186,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/industries': {
-      id: '/industries'
-      path: '/industries'
-      fullPath: '/industries'
-      preLoaderRoute: typeof IndustriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/gallery': {
       id: '/gallery'
       path: '/gallery'
@@ -253,13 +198,6 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -283,13 +221,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsIndexRouteImport
       parentRoute: typeof ProductsRoute
     }
-    '/industries/': {
-      id: '/industries/'
-      path: '/'
-      fullPath: '/industries/'
-      preLoaderRoute: typeof IndustriesIndexRouteImport
-      parentRoute: typeof IndustriesRoute
-    }
     '/products/$slug': {
       id: '/products/$slug'
       path: '/$slug'
@@ -297,29 +228,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof ProductsRoute
     }
-    '/industries/$slug': {
-      id: '/industries/$slug'
-      path: '/$slug'
-      fullPath: '/industries/$slug'
-      preLoaderRoute: typeof IndustriesSlugRouteImport
-      parentRoute: typeof IndustriesRoute
-    }
   }
 }
-
-interface IndustriesRouteChildren {
-  IndustriesSlugRoute: typeof IndustriesSlugRoute
-  IndustriesIndexRoute: typeof IndustriesIndexRoute
-}
-
-const IndustriesRouteChildren: IndustriesRouteChildren = {
-  IndustriesSlugRoute: IndustriesSlugRoute,
-  IndustriesIndexRoute: IndustriesIndexRoute,
-}
-
-const IndustriesRouteWithChildren = IndustriesRoute._addFileChildren(
-  IndustriesRouteChildren,
-)
 
 interface ProductsRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
@@ -338,10 +248,8 @@ const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  BlogRoute: BlogRoute,
   ContactRoute: ContactRoute,
   GalleryRoute: GalleryRoute,
-  IndustriesRoute: IndustriesRouteWithChildren,
   ProductsRoute: ProductsRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

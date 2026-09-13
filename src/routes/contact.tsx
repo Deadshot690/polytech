@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { z } from "zod";
-import { Mail, Phone, MapPin, MessageCircle, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, MessageCircle, CheckCircle2, Linkedin } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -67,8 +67,9 @@ function Contact() {
 
   const details = [
     { icon: Mail, t: "Email", v: CONTACT.email, href: `mailto:${CONTACT.email}` },
-    { icon: Phone, t: "Phone", v: CONTACT.phone, href: `tel:${CONTACT.phoneRaw}` },
+    { icon: Phone, t: "Phone", v: `${CONTACT.phone} / ${CONTACT.phone2}`, href: `tel:${CONTACT.phoneRaw}` },
     { icon: MessageCircle, t: "WhatsApp", v: "Chat with sales", href: whatsappUrl() },
+    { icon: Linkedin, t: "LinkedIn", v: "PCR Polymers LLP", href: CONTACT.linkedin },
     { icon: MapPin, t: "Address", v: CONTACT.address, href: mapUrl() },
   ];
 

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Leaf, Users, Scale, Recycle } from "lucide-react";
+import { Recycle } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { Section, SectionHeader, Reveal } from "@/components/site/Section";
 
@@ -22,12 +22,6 @@ const stats = [
   { v: "40%", l: "Energy from renewables (2026 target)" },
 ];
 
-const esg = [
-  { icon: Leaf, t: "Environmental", d: "Recycled feedstock, closed-loop water, and renewable-energy targets across operations." },
-  { icon: Users, t: "Social", d: "Safe workplaces, fair labour and community engagement in Surat and beyond." },
-  { icon: Scale, t: "Governance", d: "Transparent reporting, certified compliance and responsible sourcing." },
-];
-
 const stages = [
   "Collect & sort waste streams",
   "Clean & decontaminate",
@@ -47,21 +41,6 @@ function Sustainability() {
               <div className="font-numeric text-2xl font-bold text-brand-green">{s.v}</div>
               <div className="mt-1 text-xs text-muted-foreground">{s.l}</div>
             </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section className="border-t border-border">
-        <SectionHeader center eyebrow="ESG framework" title="Responsible on every axis." />
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {esg.map((e, i) => (
-            <Reveal key={e.t} delay={i * 0.06}>
-              <div className="glass card-lift h-full rounded-2xl p-6">
-                <e.icon className="h-7 w-7 text-brand-green" />
-                <div className="mt-3 font-display text-lg font-semibold">{e.t}</div>
-                <p className="mt-2 text-sm text-muted-foreground">{e.d}</p>
-              </div>
-            </Reveal>
           ))}
         </div>
       </Section>
