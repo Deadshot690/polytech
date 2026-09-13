@@ -6,13 +6,13 @@ import { Section, SectionHeader, Reveal } from "@/components/site/Section";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Kohinoor Polytech" },
+      { title: "About — PCR Polymers LLP" },
       {
         name: "description",
         content:
           "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers.",
       },
-      { property: "og:title", content: "About — Kohinoor Polytech" },
+      { property: "og:title", content: "About — PCR Polymers LLP" },
       {
         property: "og:description",
         content:
@@ -65,7 +65,7 @@ const leaders = [
     name: "Mohsin Memon",
     role: "CEO & Founder",
     image: "/Assets/leaders/mohsin-memon.png",
-    bio: "Spearheads the strategic vision, technological roadmap, and sustainable polymer innovations that drive Kohinoor's growth and industry partnerships.",
+    bio: "Spearheads the strategic vision, technological roadmap, and sustainable polymer innovations that drive PCR Polymers LLP's growth and industry partnerships.",
   },
   {
     name: "Mustafa Memon",
@@ -79,7 +79,7 @@ function About() {
   return (
     <div>
       <PageHero
-        eyebrow="About Kohinoor"
+        eyebrow="About PCR Polymers"
         title="A sustainable polymer engineering company."
         subtitle="We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers. As a sustainable B2B supply chain partner, we convert plastic waste into premium, industrial-grade raw materials for the packaging, automotive, and household product industries."
       />
@@ -146,7 +146,7 @@ function About() {
       </Section>
 
       <Section className="border-t border-border">
-        <SectionHeader center eyebrow="Leadership" title="The people behind Kohinoor." />
+        <SectionHeader center eyebrow="Leadership" title="The people behind PCR Polymers LLP." />
         <div className="mx-auto mt-12 grid max-w-3xl gap-8 sm:grid-cols-2">
           {leaders.map((l, i) => (
             <Reveal key={l.name} delay={i * 0.08}>

@@ -51,8 +51,8 @@ export function Navbar() {
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 md:px-8">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src={logo} alt="Kohinoor Polytech" width={36} height={36} className="h-9 w-9" />
-            <span className="font-display text-lg font-bold tracking-tight">Kohinoor Polytech</span>
+            <img src={logo} alt="PCR Polymers LLP" width={38} height={38} className="h-9 w-9 object-contain" />
+            <span className="font-display text-lg font-bold tracking-tight">PCR Polymers LLP</span>
           </Link>
 
           <div className="hidden items-center gap-1 lg:flex">

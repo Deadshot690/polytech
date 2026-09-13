@@ -53,7 +53,7 @@ export const blogPosts: BlogPost[] = [
     category: "Manufacturing",
     author: {
       name: "Engineering & Tech Council",
-      role: "Kohinoor Polytech Polymers Lab",
+      role: "PCR Polymers LLP Polymers Lab",
     },
     publishedAt: "2026-09-12",
     displayDate: "12 Sep 2026",
@@ -62,7 +62,7 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/advanced-manufacturing.jpg",
     imageAlt: "Advanced industrial manufacturing machinery and precision automation",
     tags: ["Compounding", "MFI Control", "Manufacturing", "Quality Control"],
-    seoTitle: "Advanced Manufacturing Solutions for Modern Industry | Kohinoor Polytech",
+    seoTitle: "Advanced Manufacturing Solutions for Modern Industry | PCR Polymers LLP",
     seoDescription:
       "How precision engineering and modern compounding technologies help manufacturers improve cycle times, strength, and component reliability.",
     content: {
@@ -125,7 +125,7 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/automation-manufacturing.jpg",
     imageAlt: "Automated robotic systems in smart manufacturing line",
     tags: ["Automation", "Sensors", "Extrusion", "Smart Factory"],
-    seoTitle: "The Role of Automation in Industrial Polymer Manufacturing | Kohinoor Polytech",
+    seoTitle: "The Role of Automation in Industrial Polymer Manufacturing | PCR Polymers LLP",
     seoDescription:
       "Discover how sensor-guided gravimetric dosing and smart extrusion automation ensure defect-free recycled polymer compounding.",
     content: {
@@ -181,7 +181,7 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/engineering-precision.jpg",
     imageAlt: "High-precision engineering components and material development",
     tags: ["Innovation", "Automotive", "Circular Economy", "Formulation"],
-    seoTitle: "Engineering Precision for a Changing Industrial Landscape | Kohinoor Polytech",
+    seoTitle: "Engineering Precision for a Changing Industrial Landscape | PCR Polymers LLP",
     seoDescription:
       "How custom formulation engineering meets automotive lightweighting and circular compliance mandates without compromise.",
     content: {
@@ -237,7 +237,7 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/polymer-testing-lab.jpg",
     imageAlt: "Precision polymer laboratory testing and rheological analysis",
     tags: ["MFI", "Polypropylene", "Rheology", "PCR"],
-    seoTitle: "Tackling MFI Drift in Recycled Polypropylene | Kohinoor Polytech",
+    seoTitle: "Tackling MFI Drift in Recycled Polypropylene | PCR Polymers LLP",
     seoDescription:
       "Technical insights on controlling Melt Flow Index variations in PCR polypropylene using targeted molecular modifiers.",
     content: {
@@ -293,7 +293,7 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/thin-wall-moulding.jpg",
     imageAlt: "High-speed precision injection moulding and automated packaging lines",
     tags: ["PPCP", "Packaging", "Thin-Wall", "High Flow"],
-    seoTitle: "High-Flow Copolymer Formulations for Thin-Wall Moulding | Kohinoor Polytech",
+    seoTitle: "High-Flow Copolymer Formulations for Thin-Wall Moulding | PCR Polymers LLP",
     seoDescription:
       "How our 35 MFI PPCP thin-wall grade helps packaging converters achieve 12% faster cycles without brittle failure.",
     content: {
@@ -348,7 +348,7 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/composite-materials.jpg",
     imageAlt: "High-performance glass-filled composite engineering and components",
     tags: ["Compounds", "Glass Filled", "Metal Replacement", "Automotive"],
-    seoTitle: "Glass-Filled Compounds Replacing Engineering Resins | Kohinoor Polytech",
+    seoTitle: "Glass-Filled Compounds Replacing Engineering Resins | PCR Polymers LLP",
     seoDescription:
       "Explore how chemically coupled glass-filled polypropylene compounds reduce weight and costs compared to PA6 and die-cast metals.",
     content: {
@@ -394,7 +394,7 @@ export const blogPosts: BlogPost[] = [
     category: "Manufacturing",
     author: {
       name: "Plant Operations",
-      role: "Kohinoor Polytech Surat Facility",
+      role: "PCR Polymers LLP Surat Facility",
     },
     publishedAt: "2026-08-05",
     displayDate: "05 Aug 2026",
@@ -403,7 +403,7 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/optical-sorting-recycling.jpg",
     imageAlt: "Modern optical sorting, washing, and circular plastics recycling systems",
     tags: ["Sorting", "Decontamination", "Washing", "Surat Plant"],
-    seoTitle: "Optical Sorting & Decontamination in PCR Plastics | Kohinoor Polytech",
+    seoTitle: "Optical Sorting & Decontamination in PCR Plastics | PCR Polymers LLP",
     seoDescription:
       "How multi-spectral sorting and aggressive washing systems ensure pristine polymer granules for industrial manufacturing.",
     content: {
@@ -443,13 +443,13 @@ export const blogPosts: BlogPost[] = [
   {
     id: "post-8",
     slug: "plant-expansion-capacity-update",
-    title: "Scaling Up: Kohinoor Polytech Commissioning Next-Gen Extrusion Capacity",
+    title: "Scaling Up: PCR Polymers LLP Commissioning Next-Gen Extrusion Capacity",
     excerpt:
       "Announcing the installation of advanced co-rotating twin-screw compounding lines, expanding our annual processing capacity to over 6,000 metric tonnes.",
     category: "Company News",
     author: {
       name: "Corporate Communications",
-      role: "Kohinoor Polytech Executive Board",
+      role: "PCR Polymers LLP Executive Board",
     },
     publishedAt: "2026-07-25",
     displayDate: "25 Jul 2026",
@@ -458,12 +458,12 @@ export const blogPosts: BlogPost[] = [
     image: "/blog/plant-expansion.jpg",
     imageAlt: "Large-scale modern industrial extrusion manufacturing facility",
     tags: ["Company News", "Capacity", "Extrusion", "Surat Facility"],
-    seoTitle: "Scaling Up: Kohinoor Polytech Commissioning Next-Gen Extrusion | Company News",
+    seoTitle: "Scaling Up: PCR Polymers LLP Commissioning Next-Gen Extrusion | Company News",
     seoDescription:
-      "Kohinoor Polytech announces the commissioning of high-torque twin-screw compounding extruders, bringing capacity to 6,000 MT annually.",
+      "PCR Polymers LLP announces the commissioning of high-torque twin-screw compounding extruders, bringing capacity to 6,000 MT annually.",
     content: {
       intro:
-        "To support accelerating demand from automotive, packaging, and industrial appliance clients across Western India and international export markets, Kohinoor Polytech has officially commissioned its newest high-torque twin-screw compounding extrusion line at our Surat manufacturing facility.",
+        "To support accelerating demand from automotive, packaging, and industrial appliance clients across Western India and international export markets, PCR Polymers LLP has officially commissioned its newest high-torque twin-screw compounding extrusion line at our Surat manufacturing facility.",
       sections: [
         {
           heading: "Expanding Annual Capacity to Over 6,000 Metric Tonnes",

@@ -6,12 +6,12 @@ import { Section, SectionHeader, Reveal } from "@/components/site/Section";
 export const Route = createFileRoute("/sustainability")({
   head: () => ({
     meta: [
-      { title: "Sustainability — Kohinoor Polytech" },
+      { title: "Sustainability — PCR Polymers LLP" },
       {
         name: "description",
-        content: "Engineering a circular polymer economy with measurable environmental impact.",
+        content: "Closed-loop compounding, water recycling, and ESG compliance at PCR Polymers LLP.",
       },
-      { property: "og:title", content: "Sustainability — Kohinoor Polytech" },
+      { property: "og:title", content: "Sustainability — PCR Polymers LLP" },
       {
         property: "og:description",
         content: "Engineering a circular polymer economy with measurable environmental impact.",

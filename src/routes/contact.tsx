@@ -12,12 +12,13 @@ import { CONTACT, whatsappUrl, mapUrl } from "@/data/site";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Kohinoor Polytech" },
+      { title: "Contact — PCR Polymers LLP" },
       {
         name: "description",
-        content: "Contact our sales desk for quotes, samples and custom compounds.",
+        content:
+          "Reach out to PCR Polymers LLP for pricing, bulk orders, technical datasheets, and sample testing.",
       },
-      { property: "og:title", content: "Contact — Kohinoor Polytech" },
+      { property: "og:title", content: "Contact — PCR Polymers LLP" },
       {
         property: "og:description",
         content: "Contact our sales desk for quotes, samples and custom compounds.",

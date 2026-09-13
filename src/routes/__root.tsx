@@ -71,7 +71,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-const TITLE = "Kohinoor Polytech — Sustainable Polymer Engineering";
+const TITLE = "PCR Polymers LLP — Sustainable Polymer Engineering";
 const DESC =
   "Premium PPHP, PPCP and custom polypropylene compounds engineered from recycled polymers for global industrial manufacturing.";
 
@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: TITLE },
       { name: "description", content: DESC },
-      { name: "author", content: "Kohinoor Polytech" },
+      { name: "author", content: "PCR Polymers LLP" },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },

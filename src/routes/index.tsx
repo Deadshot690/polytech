@@ -103,7 +103,7 @@ const susStats = [
 ];
 
 const testimonials = [
-  "Kohinoor's MFI consistency changed our line efficiency overnight.",
+  "PCR Polymers' MFI consistency changed our line efficiency overnight.",
   "Their recycled-content grades met our sustainability goals without compromising quality.",
   "The team responded like an extension of our engineering department.",
 ];
@@ -190,7 +190,7 @@ function Home() {
             <SectionHeader
               eyebrow="Who we are"
               title="A polymer engineering company built around the circular economy."
-              subtitle="Kohinoor Polytech converts post-consumer and post-industrial polymers into premium PPHP, PPCP, HDPE and customized compounds. Every batch is validated for MFI stability, impurity control and colour consistency before it leaves our plant."
+              subtitle="PCR Polymers LLP converts post-consumer and post-industrial polymers into premium PPHP, PPCP, HDPE and customized compounds. Every batch is validated for MFI stability, impurity control and colour consistency before it leaves our plant."
             />
             <div className="mt-8 grid grid-cols-2 gap-3">
               {features.map((f) => (
@@ -229,9 +229,9 @@ function Home() {
         </div>
       </Section>
 
-      {/* WHY KOHINOOR */}
+      {/* WHY PCR POLYMERS */}
       <Section className="border-t border-border">
-        <SectionHeader center eyebrow="Why Kohinoor" title="Eight reasons to choose us." />
+        <SectionHeader center eyebrow="Why PCR Polymers" title="Eight reasons to choose us." />
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {reasons.map((r, i) => (
             <Reveal key={r.t} delay={i * 0.04}>

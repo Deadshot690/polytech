@@ -5,12 +5,12 @@ import { Section, Reveal } from "@/components/site/Section";
 export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
-      { title: "Projects — Kohinoor Polytech" },
+      { title: "Projects — PCR Polymers LLP" },
       {
         name: "description",
-        content: "Case studies showing measurable results across industries.",
+        content: "Selected case studies where our engineered compounds replaced prime material.",
       },
-      { property: "og:title", content: "Projects — Kohinoor Polytech" },
+      { property: "og:title", content: "Projects — PCR Polymers LLP" },
       {
         property: "og:description",
         content: "Case studies showing measurable results across industries.",

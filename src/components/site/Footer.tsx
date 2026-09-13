@@ -19,13 +19,13 @@ export function Footer() {
           <Link to="/" className="flex items-center gap-2.5">
             <img
               src={logo}
-              alt="Kohinoor Polytech"
-              width={36}
-              height={36}
+              alt="PCR Polymers LLP"
+              width={38}
+              height={38}
               loading="lazy"
-              className="h-9 w-9"
+              className="h-9 w-9 object-contain"
             />
-            <span className="font-display text-lg font-bold">Kohinoor Polytech</span>
+            <span className="font-display text-lg font-bold">PCR Polymers LLP</span>
           </Link>
           <p className="mt-4 text-sm text-muted-foreground">
             Premium PPHP, PPCP and custom polypropylene compounds engineered from recycled polymers
@@ -158,7 +158,7 @@ export function Footer() {
 
       <div className="hairline">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-6 text-xs text-muted-foreground md:flex-row md:px-8">
-          <p>© {new Date().getFullYear()} Kohinoor Polytech. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} PCR Polymers LLP. All rights reserved.</p>
           <div className="flex flex-wrap gap-4">
             {["ISO 9001:2015", "RoHS Compliant", "REACH Registered", "Privacy", "Terms"].map(
               (t) => (

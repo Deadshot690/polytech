@@ -18,13 +18,13 @@ import { galleryItems, type GalleryItem } from "@/data/gallery";
 export const Route = createFileRoute("/gallery")({
   head: () => ({
     meta: [
-      { title: "Polymer Gallery — Kohinoor Polytech" },
+      { title: "Polymer Gallery — PCR Polymers LLP" },
       {
         name: "description",
         content:
-          "Explore authentic photographs of our PCR Polypropylene, HDPE, and custom engineered plastic granules.",
+          "Browse high-resolution photographs of our real polymer granules, manufacturing facilities, quality control testing, and packaging across PP, HDPE, and custom compounds.",
       },
-      { property: "og:title", content: "Polymer Gallery — Kohinoor Polytech" },
+      { property: "og:title", content: "Polymer Gallery — PCR Polymers LLP" },
       {
         property: "og:description",
         content:

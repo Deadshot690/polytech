@@ -228,7 +228,7 @@ export const CONTACT = {
 };
 
 export const whatsappUrl = (
-  msg = "Hello Kohinoor Polytech, I'd like to inquire about your products.",
+  msg = "Hello PCR Polymers LLP, I'd like to inquire about your products.",
 ) => `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(msg)}`;
 
 export const mapUrl = () =>

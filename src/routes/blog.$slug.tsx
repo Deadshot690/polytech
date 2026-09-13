@@ -27,7 +27,7 @@ export const Route = createFileRoute("/blog/$slug")({
     if (!loaderData?.post) {
       return {
         meta: [
-          { title: "Article Not Found — Kohinoor Polytech" },
+          { title: "Article Not Found — PCR Polymers LLP" },
           { name: "robots", content: "noindex" },
         ],
       };
@@ -36,7 +36,7 @@ export const Route = createFileRoute("/blog/$slug")({
     const { post } = loaderData;
     return {
       meta: [
-        { title: `${post.title} — Kohinoor Polytech Insights` },
+        { title: `${post.title} — PCR Polymers LLP Insights` },
         { name: "description", content: post.excerpt },
         { name: "author", content: post.author.name },
         { property: "og:title", content: post.title },

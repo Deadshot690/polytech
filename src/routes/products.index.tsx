@@ -9,12 +9,13 @@ import { products, productCategories } from "@/data/site";
 export const Route = createFileRoute("/products/")({
   head: () => ({
     meta: [
-      { title: "Products — Kohinoor Polytech" },
+      { title: "Products — PCR Polymers LLP" },
       {
         name: "description",
-        content: "Engineered PCR PPHP, PCR PPCP, customized compounds and PCR HDPE granules.",
+        content:
+          "Browse technical specifications for our PPHP, PPCP and custom polypropylene compound grades.",
       },
-      { property: "og:title", content: "Products — Kohinoor Polytech" },
+      { property: "og:title", content: "Products — PCR Polymers LLP" },
       {
         property: "og:description",
         content: "Engineered PCR PPHP, PCR PPCP, customized compounds and PCR HDPE granules.",

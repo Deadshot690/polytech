@@ -14,17 +14,17 @@ import { getFeaturedPost } from "@/lib/blog-service";
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "Blog & Industrial Insights — Kohinoor Polytech" },
+      { title: "Blog & Industrial Insights — PCR Polymers LLP" },
       {
         name: "description",
         content:
-          "Explore manufacturing knowledge, polymer compounding insights, circular economy perspectives, and technology updates from Kohinoor Polytech.",
+          "Explore manufacturing knowledge, polymer compounding insights, circular economy perspectives, and technology updates from PCR Polymers LLP.",
       },
-      { property: "og:title", content: "Blog & Industrial Insights — Kohinoor Polytech" },
+      { property: "og:title", content: "Blog & Industrial Insights — PCR Polymers LLP" },
       {
         property: "og:description",
         content:
-          "Explore manufacturing knowledge, polymer compounding insights, circular economy perspectives, and technology updates from Kohinoor Polytech.",
+          "Explore manufacturing knowledge, polymer compounding insights, circular economy perspectives, and technology updates from PCR Polymers LLP.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -95,7 +95,7 @@ export function BlogIndex() {
       <PageHero
         eyebrow="BLOG / INSIGHTS"
         title="Ideas, expertise & innovation"
-        subtitle="Explore the latest insights, manufacturing knowledge, technology updates, company news and industry perspectives from Kohinoor Polytech."
+        subtitle="Explore the latest insights, manufacturing knowledge, technology updates, company news and industry perspectives from PCR Polymers LLP."
       />
 
       <Section className="py-12 md:py-16">
