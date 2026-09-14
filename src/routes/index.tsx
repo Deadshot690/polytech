@@ -26,7 +26,6 @@ import { industries, productCategories } from "@/data/site";
 import heroVideo from "@/hero.mp4";
 
 export const Route = createFileRoute("/")({
-  ssr: false,
   component: Home,
 });
 
