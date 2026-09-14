@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
 import { LeadDialog } from "../components/site/LeadDialog";
+import { GoogleAnalytics } from "../components/site/GoogleAnalytics";
 import { LeadProvider } from "../lib/lead-context";
 
 function NotFoundComponent() {
@@ -126,6 +127,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <LeadProvider>
+        <GoogleAnalytics />
         <Navbar />
         <main className="min-h-screen pt-16">
           <Outlet />

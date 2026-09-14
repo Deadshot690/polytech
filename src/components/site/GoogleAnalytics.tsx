@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useRouterState } from "@tanstack/react-router";
 import { GOOGLE_ANALYTICS_ID } from "@/lib/site-config";
 
 declare global {
@@ -10,10 +9,6 @@ declare global {
 }
 
 export function GoogleAnalytics() {
-  const location = useRouterState({
-    select: (state) => state.location,
-  });
-
   useEffect(() => {
     if (!GOOGLE_ANALYTICS_ID) return;
 
@@ -34,13 +29,18 @@ export function GoogleAnalytics() {
       window.gtag("config", GOOGLE_ANALYTICS_ID, { send_page_view: false });
     }
 
-    if (typeof window.gtag !== "function") return;
+    const trackPageView = () => {
+      window.gtag("event", "page_view", {
+        page_path: `${window.location.pathname}${window.location.search}`,
+        page_title: document.title,
+      });
+    };
 
-    window.gtag("event", "page_view", {
-      page_path: `${location.pathname}${location.search}`,
-      page_title: document.title,
-    });
-  }, [location.pathname, location.search]);
+    trackPageView();
+    window.addEventListener("popstate", trackPageView);
+
+    return () => window.removeEventListener("popstate", trackPageView);
+  }, []);
 
   if (!GOOGLE_ANALYTICS_ID) return null;
   return null;
