@@ -15,7 +15,26 @@ export function GoogleAnalytics() {
   });
 
   useEffect(() => {
-    if (!GOOGLE_ANALYTICS_ID || typeof window.gtag !== "function") return;
+    if (!GOOGLE_ANALYTICS_ID) return;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag =
+      window.gtag ||
+      ((...args: unknown[]) => {
+        window.dataLayer.push(args);
+      });
+
+    if (!document.getElementById("google-analytics-script")) {
+      const script = document.createElement("script");
+      script.id = "google-analytics-script";
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`;
+      document.head.appendChild(script);
+      window.gtag("js", new Date());
+      window.gtag("config", GOOGLE_ANALYTICS_ID, { send_page_view: false });
+    }
+
+    if (typeof window.gtag !== "function") return;
 
     window.gtag("event", "page_view", {
       page_path: `${location.pathname}${location.search}`,
@@ -24,20 +43,5 @@ export function GoogleAnalytics() {
   }, [location.pathname, location.search]);
 
   if (!GOOGLE_ANALYTICS_ID) return null;
-
-  return (
-    <>
-      <script async src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`} />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            window.gtag = function(){window.dataLayer.push(arguments);}
-            window.gtag('js', new Date());
-            window.gtag('config', '${GOOGLE_ANALYTICS_ID}', { send_page_view: false });
-          `,
-        }}
-      />
-    </>
-  );
+  return null;
 }
