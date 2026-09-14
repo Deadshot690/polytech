@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Navbar } from "../components/site/Navbar";
 import { Footer } from "../components/site/Footer";
 import { LeadDialog } from "../components/site/LeadDialog";
+import { GoogleAnalytics } from "../components/site/GoogleAnalytics";
 import { LeadProvider } from "../lib/lead-context";
 
 function NotFoundComponent() {
@@ -87,6 +88,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "index, follow" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -125,6 +127,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <LeadProvider>
+        <GoogleAnalytics />
         <Navbar />
         <main className="min-h-screen pt-16">
           <Outlet />

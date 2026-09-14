@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { products } from "../data/site";
+import { products, industries } from "../data/site";
 import { blogPosts } from "../data/blogs";
-
-const BASE_URL = "";
+import { SITE_URL } from "../lib/site-config";
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
@@ -21,6 +20,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         ];
         const dynamic = [
           ...products.map((p) => `/products/${p.slug}`),
+          ...industries.map((i) => `/industries/${i.slug}`),
           ...blogPosts.map((b) => `/blog/${b.slug}`),
         ];
         const all = [...staticPaths, ...dynamic];
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const urls = all
           .map(
             (p) =>
-              `  <url>\n    <loc>${BASE_URL}${p}</loc>\n    <changefreq>weekly</changefreq>\n  </url>`,
+              `  <url>\n    <loc>${SITE_URL}${p}</loc>\n    <changefreq>weekly</changefreq>\n  </url>`,
           )
           .join("\n");
 
