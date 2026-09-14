@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kohinoorpolytech.com/sitemap.xml
+Sitemap: https://kohinoor-mu.vercel.app/sitemap.xml
