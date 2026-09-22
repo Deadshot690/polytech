@@ -3,6 +3,7 @@ import { Linkedin, Twitter, Youtube, Instagram } from "lucide-react";
 import { toast } from "sonner";
 import logo from "/Assets/logo_transparent_blue.png";
 import { CONTACT, whatsappUrl, mapUrl } from "@/data/site";
+import { useCurrentSiteName } from "@/lib/site-config";
 
 const social = [
   { icon: Linkedin, label: "LinkedIn", href: CONTACT.linkedin },
@@ -12,6 +13,7 @@ const social = [
 ];
 
 export function Footer() {
+  const siteName = useCurrentSiteName();
   return (
     <footer className="border-t border-border bg-secondary/40">
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-16 md:grid-cols-4 md:px-8">
@@ -19,13 +21,15 @@ export function Footer() {
           <Link to="/" className="flex items-center gap-2.5">
             <img
               src={logo}
-              alt="PCR Polymers LLP"
+              alt={siteName}
               width={38}
               height={38}
               loading="lazy"
               className="h-9 w-9 object-contain"
             />
-            <span className="font-display text-lg font-bold">PCR Polymers LLP</span>
+            <span suppressHydrationWarning className="font-display text-lg font-bold">
+              {siteName}
+            </span>
           </Link>
           <p className="mt-4 text-sm text-muted-foreground">
             Premium PPHP, PPCP and custom polypropylene compounds engineered from recycled polymers
@@ -144,7 +148,7 @@ export function Footer() {
             </li>
             <li>
               <a
-                href={whatsappUrl()}
+                href={whatsappUrl(undefined, siteName)}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-foreground"
@@ -158,7 +162,9 @@ export function Footer() {
 
       <div className="hairline">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-5 py-6 text-xs text-muted-foreground md:flex-row md:px-8">
-          <p>© {new Date().getFullYear()} PCR Polymers LLP. All rights reserved.</p>
+          <p suppressHydrationWarning>
+            © {new Date().getFullYear()} {siteName}. All rights reserved.
+          </p>
           <div className="flex flex-wrap gap-4">
             {["ISO 9001:2015", "RoHS Compliant", "REACH Registered", "Privacy", "Terms"].map(
               (t) => (

@@ -7,6 +7,24 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  vite: {
+    server: {
+      allowedHosts: [
+        "cprpolytechllp.com",
+        "cprpolytechllp.in",
+        "kohinoorpolytech.com",
+        "kohinoorpolytech.in",
+        "qlumix.com",
+        "qlumix.in",
+        "www.cprpolytechllp.com",
+        "www.cprpolytechllp.in",
+        "www.kohinoorpolytech.com",
+        "www.kohinoorpolytech.in",
+        "www.qlumix.com",
+        "www.qlumix.in",
+      ],
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

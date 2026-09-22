@@ -17,6 +17,7 @@ import { Footer } from "../components/site/Footer";
 import { LeadDialog } from "../components/site/LeadDialog";
 import { GoogleAnalytics } from "../components/site/GoogleAnalytics";
 import { LeadProvider } from "../lib/lead-context";
+import { getCurrentSiteName, useCurrentSiteName } from "../lib/site-config";
 
 function NotFoundComponent() {
   return (
@@ -72,35 +73,38 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-const TITLE = "PCR Polymers LLP — Sustainable Polymer Engineering";
 const DESC =
   "Premium PPHP, PPCP and custom polypropylene compounds engineered from recycled polymers for global industrial manufacturing.";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: TITLE },
-      { name: "description", content: DESC },
-      { name: "author", content: "PCR Polymers LLP" },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESC },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "robots", content: "index, follow" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/Assets/logo_transparent_blue.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap",
-      },
-    ],
-  }),
+  head: () => {
+    const siteName = getCurrentSiteName();
+    const title = `${siteName} — Sustainable Polymer Engineering`;
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title },
+        { name: "description", content: DESC },
+        { name: "author", content: siteName },
+        { property: "og:title", content: title },
+        { property: "og:description", content: DESC },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "robots", content: "index, follow" },
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", type: "image/png", href: "/Assets/logo_transparent_blue.png" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap",
+        },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -123,6 +127,32 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const siteName = useCurrentSiteName();
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+
+    const knownBrands = ["PCR Polymers LLP", "Kohinoor Polytech", "CPR Polytech LLP", "Qlumix"];
+
+    const syncTitle = () => {
+      for (const brand of knownBrands) {
+        if (document.title.includes(brand) && brand !== siteName) {
+          document.title = document.title.replaceAll(brand, siteName);
+          break;
+        }
+      }
+    };
+
+    syncTitle();
+
+    const titleEl = document.querySelector("title");
+    if (!titleEl) return;
+
+    const observer = new MutationObserver(() => syncTitle());
+    observer.observe(titleEl, { childList: true, characterData: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [siteName]);
 
   return (
     <QueryClientProvider client={queryClient}>

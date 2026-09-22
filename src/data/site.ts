@@ -227,9 +227,10 @@ export const CONTACT = {
   linkedin: "https://www.linkedin.com/company/pcrpolymersllp/",
 };
 
-export const whatsappUrl = (
-  msg = "Hello PCR Polymers LLP, I'd like to inquire about your products.",
-) => `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(msg)}`;
+export const whatsappUrl = (msg?: string, siteName = "Kohinoor Polytech") => {
+  const defaultMsg = `Hello ${siteName}, I'd like to inquire about your products.`;
+  return `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(msg ?? defaultMsg)}`;
+};
 
 export const mapUrl = () =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT.address)}`;

@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { Menu, Moon, Sun, X } from "lucide-react";
 import logo from "/Assets/logo_transparent_blue.png";
 import { useLead } from "@/lib/lead-context";
+import { useCurrentSiteName } from "@/lib/site-config";
 
 const links = [
   { to: "/about", label: "About" },
@@ -15,6 +16,7 @@ const links = [
 ];
 
 export function Navbar() {
+  const siteName = useCurrentSiteName();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
@@ -51,8 +53,19 @@ export function Navbar() {
       >
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 md:px-8">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src={logo} alt="PCR Polymers LLP" width={38} height={38} className="h-9 w-9 object-contain" />
-            <span className="font-display text-lg font-bold tracking-tight">PCR Polymers LLP</span>
+            <img
+              src={logo}
+              alt={siteName}
+              width={38}
+              height={38}
+              className="h-9 w-9 object-contain"
+            />
+            <span
+              suppressHydrationWarning
+              className="font-display text-lg font-bold tracking-tight"
+            >
+              {siteName}
+            </span>
           </Link>
 
           <div className="hidden items-center gap-1 lg:flex">

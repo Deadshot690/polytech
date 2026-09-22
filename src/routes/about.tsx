@@ -2,24 +2,28 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Target, Eye, Building2, Award } from "lucide-react";
 import { PageHero } from "@/components/site/PageHero";
 import { Section, SectionHeader, Reveal } from "@/components/site/Section";
+import { getCurrentSiteName } from "@/lib/site-config";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About — PCR Polymers LLP" },
-      {
-        name: "description",
-        content:
-          "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers.",
-      },
-      { property: "og:title", content: "About — PCR Polymers LLP" },
-      {
-        property: "og:description",
-        content:
-          "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers.",
-      },
-    ],
-  }),
+  head: () => {
+    const siteName = getCurrentSiteName();
+    return {
+      meta: [
+        { title: `About — ${siteName}` },
+        {
+          name: "description",
+          content:
+            "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers.",
+        },
+        { property: "og:title", content: `About — ${siteName}` },
+        {
+          property: "og:description",
+          content:
+            "We are engaged in the manufacturing and processing of high-quality plastic granules, specializing in Polypropylene (PP) and Post-Consumer Recycled (PCR) polymers.",
+        },
+      ],
+    };
+  },
   component: About,
 });
 

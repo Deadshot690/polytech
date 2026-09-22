@@ -8,23 +8,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Section } from "@/components/site/Section";
 import { CONTACT, whatsappUrl, mapUrl } from "@/data/site";
+import { useCurrentSiteName, getCurrentSiteName } from "@/lib/site-config";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact — PCR Polymers LLP" },
-      {
-        name: "description",
-        content:
-          "Reach out to PCR Polymers LLP for pricing, bulk orders, technical datasheets, and sample testing.",
-      },
-      { property: "og:title", content: "Contact — PCR Polymers LLP" },
-      {
-        property: "og:description",
-        content: "Contact our sales desk for quotes, samples and custom compounds.",
-      },
-    ],
-  }),
+  head: () => {
+    const siteName = getCurrentSiteName();
+    return {
+      meta: [
+        { title: `Contact — ${siteName}` },
+        {
+          name: "description",
+          content:
+            "Reach out to us for pricing, bulk orders, technical datasheets, and sample testing.",
+        },
+        { property: "og:title", content: `Contact — ${siteName}` },
+        {
+          property: "og:description",
+          content: "Contact our sales desk for quotes, samples and custom compounds.",
+        },
+      ],
+    };
+  },
   component: Contact,
 });
 
@@ -45,6 +49,7 @@ const Orb = ({ className, delay }: { className: string; delay: number }) => (
 );
 
 function Contact() {
+  const siteName = useCurrentSiteName();
   const [topic, setTopic] = useState(topics[0]);
   const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -82,8 +87,13 @@ function Contact() {
       v: `${CONTACT.phone} / ${CONTACT.phone2}`,
       href: `tel:${CONTACT.phoneRaw}`,
     },
-    { icon: MessageCircle, t: "WhatsApp", v: "Chat with sales", href: whatsappUrl() },
-    { icon: Linkedin, t: "LinkedIn", v: "PCR Polymers LLP", href: CONTACT.linkedin },
+    {
+      icon: MessageCircle,
+      t: "WhatsApp",
+      v: "Chat with sales",
+      href: whatsappUrl(undefined, siteName),
+    },
+    { icon: Linkedin, t: "LinkedIn", v: siteName, href: CONTACT.linkedin },
     { icon: MapPin, t: "Address", v: CONTACT.address, href: mapUrl() },
   ];
 

@@ -5,23 +5,27 @@ import { PageHero } from "@/components/site/PageHero";
 import { Section, SectionHeader, Reveal } from "@/components/site/Section";
 import { Input } from "@/components/ui/input";
 import { products, productCategories } from "@/data/site";
+import { getCurrentSiteName } from "@/lib/site-config";
 
 export const Route = createFileRoute("/products/")({
-  head: () => ({
-    meta: [
-      { title: "Products — PCR Polymers LLP" },
-      {
-        name: "description",
-        content:
-          "Browse technical specifications for our PPHP, PPCP and custom polypropylene compound grades.",
-      },
-      { property: "og:title", content: "Products — PCR Polymers LLP" },
-      {
-        property: "og:description",
-        content: "Engineered PCR PPHP, PCR PPCP, customized compounds and PCR HDPE granules.",
-      },
-    ],
-  }),
+  head: () => {
+    const siteName = getCurrentSiteName();
+    return {
+      meta: [
+        { title: `Products — ${siteName}` },
+        {
+          name: "description",
+          content:
+            "Browse technical specifications for our PPHP, PPCP and custom polypropylene compound grades.",
+        },
+        { property: "og:title", content: `Products — ${siteName}` },
+        {
+          property: "og:description",
+          content: "Engineered PCR PPHP, PCR PPCP, customized compounds and PCR HDPE granules.",
+        },
+      ],
+    };
+  },
   component: Products,
 });
 
