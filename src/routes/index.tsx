@@ -23,7 +23,21 @@ import { Section, SectionHeader, Reveal } from "@/components/site/Section";
 import { PolymerPreviewCard } from "@/components/site/PolymerPreviewCard";
 import { useLead } from "@/lib/lead-context";
 import { industries, productCategories } from "@/data/site";
-import heroVideo from "@/hero.mp4";
+const heroVideoDomains: Record<string, string> = {
+  "qlumix.com": "https://assets.qlumix.com/hero.mp4",
+  "qlumix.in": "https://assets.qlumix.in/hero.mp4",
+  "pcrpolymers.com": "https://assets.pcrpolymers.com/hero.mp4",
+  "pcrpolymers.in": "https://assets.pcrpolymers.in/hero.mp4",
+  "kpolytech.in": "https://assets.kpolytech.in/hero.mp4",
+};
+
+function getHeroVideoUrl(): string {
+  if (typeof window === "undefined") {
+    return "https://assets.qlumix.com/hero.mp4";
+  }
+  const hostname = window.location.hostname.replace(/^www\./i, "").toLowerCase();
+  return heroVideoDomains[hostname] || "https://assets.qlumix.com/hero.mp4";
+}
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -109,6 +123,7 @@ const testimonials = [
 ];
 
 function Home() {
+  const heroVideo = getHeroVideoUrl();
   const heroRef = useRef<HTMLDivElement>(null);
   const { openLead } = useLead();
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
