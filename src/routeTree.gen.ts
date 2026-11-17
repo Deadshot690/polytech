@@ -11,17 +11,21 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SustainabilityRouteImport } from './routes/sustainability'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as QrCodeRouteImport } from './routes/qr-code'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BusinessCardRouteImport } from './routes/business-card'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as AdminQrCodeRouteImport } from './routes/admin.qr-code'
 
 const SustainabilityRoute = SustainabilityRouteImport.update({
   id: '/sustainability',
@@ -31,6 +35,11 @@ const SustainabilityRoute = SustainabilityRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrCodeRoute = QrCodeRouteImport.update({
+  id: '/qr-code',
+  path: '/qr-code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsRoute = ProjectsRouteImport.update({
@@ -51,6 +60,11 @@ const GalleryRoute = GalleryRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessCardRoute = BusinessCardRouteImport.update({
+  id: '/business-card',
+  path: '/business-card',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -78,6 +92,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BlogRoute,
 } as any)
+const RCodeRoute = RCodeRouteImport.update({
+  id: '/r/$code',
+  path: '/r/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductsSlugRoute = ProductsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -88,32 +107,45 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const AdminQrCodeRoute = AdminQrCodeRouteImport.update({
+  id: '/admin/qr-code',
+  path: '/admin/qr-code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
+  '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
+  '/qr-code': typeof QrCodeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
+  '/admin/qr-code': typeof AdminQrCodeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/r/$code': typeof RCodeRoute
   '/blog/': typeof BlogIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/projects': typeof ProjectsRoute
+  '/qr-code': typeof QrCodeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
+  '/admin/qr-code': typeof AdminQrCodeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/r/$code': typeof RCodeRoute
   '/blog': typeof BlogIndexRoute
   '/products': typeof ProductsIndexRoute
 }
@@ -122,14 +154,18 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
+  '/business-card': typeof BusinessCardRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/products': typeof ProductsRouteWithChildren
   '/projects': typeof ProjectsRoute
+  '/qr-code': typeof QrCodeRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sustainability': typeof SustainabilityRoute
+  '/admin/qr-code': typeof AdminQrCodeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/r/$code': typeof RCodeRoute
   '/blog/': typeof BlogIndexRoute
   '/products/': typeof ProductsIndexRoute
 }
@@ -139,27 +175,35 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/blog'
+    | '/business-card'
     | '/contact'
     | '/gallery'
     | '/products'
     | '/projects'
+    | '/qr-code'
     | '/sitemap.xml'
     | '/sustainability'
+    | '/admin/qr-code'
     | '/blog/$slug'
     | '/products/$slug'
+    | '/r/$code'
     | '/blog/'
     | '/products/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/business-card'
     | '/contact'
     | '/gallery'
     | '/projects'
+    | '/qr-code'
     | '/sitemap.xml'
     | '/sustainability'
+    | '/admin/qr-code'
     | '/blog/$slug'
     | '/products/$slug'
+    | '/r/$code'
     | '/blog'
     | '/products'
   id:
@@ -167,14 +211,18 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/blog'
+    | '/business-card'
     | '/contact'
     | '/gallery'
     | '/products'
     | '/projects'
+    | '/qr-code'
     | '/sitemap.xml'
     | '/sustainability'
+    | '/admin/qr-code'
     | '/blog/$slug'
     | '/products/$slug'
+    | '/r/$code'
     | '/blog/'
     | '/products/'
   fileRoutesById: FileRoutesById
@@ -183,12 +231,16 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   BlogRoute: typeof BlogRouteWithChildren
+  BusinessCardRoute: typeof BusinessCardRoute
   ContactRoute: typeof ContactRoute
   GalleryRoute: typeof GalleryRoute
   ProductsRoute: typeof ProductsRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
+  QrCodeRoute: typeof QrCodeRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SustainabilityRoute: typeof SustainabilityRoute
+  AdminQrCodeRoute: typeof AdminQrCodeRoute
+  RCodeRoute: typeof RCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr-code': {
+      id: '/qr-code'
+      path: '/qr-code'
+      fullPath: '/qr-code'
+      preLoaderRoute: typeof QrCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects': {
@@ -233,6 +292,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/business-card': {
+      id: '/business-card'
+      path: '/business-card'
+      fullPath: '/business-card'
+      preLoaderRoute: typeof BusinessCardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -270,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/r/$code': {
+      id: '/r/$code'
+      path: '/r/$code'
+      fullPath: '/r/$code'
+      preLoaderRoute: typeof RCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products/$slug': {
       id: '/products/$slug'
       path: '/$slug'
@@ -283,6 +356,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/admin/qr-code': {
+      id: '/admin/qr-code'
+      path: '/admin/qr-code'
+      fullPath: '/admin/qr-code'
+      preLoaderRoute: typeof AdminQrCodeRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -317,12 +397,16 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   BlogRoute: BlogRouteWithChildren,
+  BusinessCardRoute: BusinessCardRoute,
   ContactRoute: ContactRoute,
   GalleryRoute: GalleryRoute,
   ProductsRoute: ProductsRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
+  QrCodeRoute: QrCodeRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SustainabilityRoute: SustainabilityRoute,
+  AdminQrCodeRoute: AdminQrCodeRoute,
+  RCodeRoute: RCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

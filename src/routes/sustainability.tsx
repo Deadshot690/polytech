@@ -9,7 +9,8 @@ export const Route = createFileRoute("/sustainability")({
       { title: "Sustainability — PCR Polymers LLP" },
       {
         name: "description",
-        content: "Closed-loop compounding, water recycling, and ESG compliance at PCR Polymers LLP.",
+        content:
+          "Closed-loop compounding, water recycling, and ESG compliance at PCR Polymers LLP.",
       },
       { property: "og:title", content: "Sustainability — PCR Polymers LLP" },
       {
