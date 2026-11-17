@@ -15,10 +15,11 @@ import {
   Check,
   Sparkles,
   ExternalLink,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { BusinessProfile, downloadVCard } from "@/lib/qr-config";
+import { BusinessProfile, downloadVCard, downloadBusinessCardPDF } from "@/lib/qr-config";
 
 interface DigitalBusinessCardProps {
   profile: BusinessProfile;
@@ -50,7 +51,14 @@ export function DigitalBusinessCard({
   const handleSaveContact = () => {
     downloadVCard(profile);
     toast.success("Contact file (.vcf) downloaded!", {
-      description: `Added ${profile.contactPerson} (${profile.companyName}) to your downloads.`,
+      description: `Added ${profile.contactPerson} (${profile.companyName}) to your phone contacts.`,
+    });
+  };
+
+  const handleDownloadPDF = () => {
+    downloadBusinessCardPDF(profile);
+    toast.success("Opening PDF Business Card...", {
+      description: "Select 'Save as PDF' in the dialog to save to your files.",
     });
   };
 
@@ -214,17 +222,38 @@ export function DigitalBusinessCard({
             {profile.description}
           </p>
 
-          {/* Primary Action Button: Save Contact */}
-          <div className="mt-5">
-            <Button
-              onClick={handleSaveContact}
-              className="w-full h-12 rounded-xl text-base font-semibold shadow-lg hover:shadow-xl transition-all btn-primary"
-            >
-              <Download className="mr-2 h-5 w-5" />
-              Save Contact to Phone
-            </Button>
-            <p className="mt-1.5 text-center text-[11px] text-muted-foreground">
-              Downloads a verified .vcf card directly compatible with iOS & Android
+          {/* Primary Action Buttons: PDF Card & Phone Contacts */}
+          <div className="mt-5 space-y-2">
+            <div className="flex flex-col sm:flex-row items-center gap-2.5">
+              {/* Download PDF Business Card */}
+              <Button
+                onClick={handleDownloadPDF}
+                className="w-full sm:flex-1 h-12 rounded-xl text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-all btn-primary cursor-pointer gap-2"
+              >
+                <FileText className="h-5 w-5" />
+                <span>Download PDF Card</span>
+                <span className="rounded bg-white/20 text-white text-[10px] px-1.5 py-0.5 font-mono font-bold">
+                  PDF
+                </span>
+              </Button>
+
+              {/* Save to Phone Contacts (VCF) */}
+              <Button
+                onClick={handleSaveContact}
+                variant="outline"
+                className="w-full sm:flex-1 h-12 rounded-xl text-sm sm:text-base font-semibold shadow-sm hover:shadow-md transition-all border-border/80 bg-secondary/50 hover:bg-secondary cursor-pointer gap-2"
+              >
+                <Download className="h-5 w-5 text-primary" />
+                <span>Save to Contacts</span>
+                <span className="rounded bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 font-mono font-bold">
+                  .VCF
+                </span>
+              </Button>
+            </div>
+
+            <p className="text-center text-[11px] text-muted-foreground pt-0.5">
+              Choose <strong>Download PDF Card</strong> to save as a document, or{" "}
+              <strong>Save to Contacts</strong> to add directly into mobile contacts.
             </p>
           </div>
 

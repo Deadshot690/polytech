@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { generateQRMatrix } from "@/lib/qr-generator";
 
 export type QRPlacementType =
   "Tabletop" | "Stall Backdrop" | "Sample Bag" | "Brochure" | "Executive Lanyard" | "General";
@@ -395,4 +396,390 @@ export function downloadVCard(profile: BusinessProfile = DEFAULT_PROFILE) {
   anchor.click();
   document.body.removeChild(anchor);
   URL.revokeObjectURL(url);
+}
+
+/**
+ * Generates and triggers high-definition printable PDF Business Card document.
+ */
+export function downloadBusinessCardPDF(profile: BusinessProfile = DEFAULT_PROFILE) {
+  if (typeof window === "undefined") return;
+
+  const origin = window.location.origin || "https://qlumix.com";
+  const qrTarget = profile.destinationQrUrl || `${origin}/business-profile`;
+
+  let qrSvgString = "";
+  try {
+    const matrix = generateQRMatrix(qrTarget);
+    const margin = 3;
+    const totalModules = matrix.length + margin * 2;
+    qrSvgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalModules} ${totalModules}" width="150" height="150" shape-rendering="crispEdges">
+      <rect width="${totalModules}" height="${totalModules}" fill="#ffffff" />
+      ${matrix
+        .map((row, r) =>
+          row
+            .map((cell, c) =>
+              cell
+                ? `<rect x="${c + margin}" y="${r + margin}" width="1" height="1" fill="#0c1524" />`
+                : "",
+            )
+            .join(""),
+        )
+        .join("")}
+    </svg>`;
+  } catch {
+    qrSvgString = "";
+  }
+
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    alert("Please allow popups in your browser to view and save the PDF business card.");
+    return;
+  }
+
+  const avatarSrc = profile.avatar?.startsWith("http")
+    ? profile.avatar
+    : `${origin}${profile.avatar || "/Assets/leaders/mohsin-memon.png"}`;
+
+  const logoSrc = profile.logo?.startsWith("http")
+    ? profile.logo
+    : `${origin}${profile.logo || "/Assets/logo_transparent_blue.png"}`;
+
+  const fullAddress = [
+    profile.address,
+    profile.city,
+    profile.state,
+    profile.postalCode,
+    profile.country,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>${profile.contactPerson} - ${profile.companyName} Business Card</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f1f5f9;
+      color: #0f172a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      min-height: 100vh;
+    }
+    .toolbar {
+      width: 100%;
+      max-width: 820px;
+      background: #0f172a;
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 14px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .toolbar-info {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .toolbar-info strong {
+      color: #38bdf8;
+      display: block;
+      font-size: 14px;
+    }
+    .btn-pdf {
+      background: #0284c7;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+      white-space: nowrap;
+    }
+    .btn-pdf:hover { background: #0369a1; }
+    
+    .card-sheet {
+      width: 100%;
+      max-width: 820px;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header-bar {
+      background: linear-gradient(135deg, #091322 0%, #0f2444 100%);
+      color: #ffffff;
+      padding: 24px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid #0284c7;
+    }
+    .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-logo {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+    }
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+    .brand-tagline {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .badge-iso {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-body {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1fr 200px;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .executive-info {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 20px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      object-fit: cover;
+      object-position: top;
+      border: 2px solid #0284c7;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .name-title h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .name-title p {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0284c7;
+      margin-top: 2px;
+    }
+
+    .coords-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 20px;
+      font-size: 12px;
+    }
+    .coord-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .coord-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 2px;
+    }
+    .coord-val {
+      color: #0f172a;
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    .address-box {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 11px;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .address-box strong {
+      display: block;
+      color: #0f172a;
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .qr-column {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-column svg {
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .qr-tip {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 10px;
+    }
+    .qr-sub {
+      font-size: 9px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .card-footer-strip {
+      background: #f8fafc;
+      padding: 12px 30px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #64748b;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+        margin: 0;
+      }
+      .toolbar { display: none !important; }
+      .card-sheet {
+        box-shadow: none;
+        border: 1px solid #94a3b8;
+        max-width: 100%;
+        page-break-inside: avoid;
+      }
+      @page {
+        size: A5 landscape;
+        margin: 10mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div class="toolbar-info">
+      <strong>Qlumix Official Digital Business Card</strong>
+      To save as PDF: Click "Save as PDF / Print", then choose <em>Destination: "Save as PDF"</em>.
+    </div>
+    <button class="btn-pdf" onclick="window.print()">
+      📄 Save as PDF / Print
+    </button>
+  </div>
+
+  <div class="card-sheet">
+    <div class="card-header-bar">
+      <div class="brand-left">
+        <img class="brand-logo" src="${logoSrc}" alt="${profile.companyName}" />
+        <div>
+          <div class="brand-title">${profile.companyName}</div>
+          <div class="brand-tagline">${profile.tagline}</div>
+        </div>
+      </div>
+      <div class="badge-iso">ISO 9001:2015 & RoHS</div>
+    </div>
+
+    <div class="card-body">
+      <div class="main-details">
+        <div class="executive-info">
+          <img class="avatar" src="${avatarSrc}" alt="${profile.contactPerson}" />
+          <div class="name-title">
+            <h2>${profile.contactPerson}</h2>
+            <p>${profile.designation}</p>
+          </div>
+        </div>
+
+        <div class="coords-grid">
+          <div class="coord-item">
+            <span class="coord-label">Direct Phone</span>
+            <span class="coord-val">${profile.phone}</span>
+          </div>
+          <div class="coord-item">
+            <span class="coord-label">WhatsApp</span>
+            <span class="coord-val">${profile.whatsapp}</span>
+          </div>
+          <div class="coord-item">
+            <span class="coord-label">Official Email</span>
+            <span class="coord-val">${profile.email}</span>
+          </div>
+          <div class="coord-item">
+            <span class="coord-label">Website</span>
+            <span class="coord-val">${profile.website}</span>
+          </div>
+        </div>
+
+        <div class="address-box">
+          <strong>Plant & Corporate Headquarters</strong>
+          ${fullAddress}
+        </div>
+      </div>
+
+      <div class="qr-column">
+        ${qrSvgString}
+        <div class="qr-tip">Scan to Open Profile</div>
+        <div class="qr-sub">Direct connection & technical TDS</div>
+      </div>
+    </div>
+
+    <div class="card-footer-strip">
+      <span>Official Verified Corporate Profile</span>
+      <span>${qrTarget}</span>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function() {
+      setTimeout(function() {
+        window.print();
+      }, 350);
+    };
+  </script>
+</body>
+</html>`;
+
+  printWindow.document.write(html);
+  printWindow.document.close();
 }

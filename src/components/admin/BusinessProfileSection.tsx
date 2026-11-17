@@ -1,5 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
-import { BusinessProfile, DEFAULT_PROFILE, downloadVCard } from "@/lib/qr-config";
+import {
+  BusinessProfile,
+  DEFAULT_PROFILE,
+  downloadVCard,
+  downloadBusinessCardPDF,
+} from "@/lib/qr-config";
 import { DigitalBusinessCard } from "@/components/qr/DigitalBusinessCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +25,7 @@ import {
   Sparkles,
   Eye,
   CheckCircle2,
+  FileText,
 } from "lucide-react";
 
 interface BusinessProfileSectionProps {
@@ -67,6 +73,11 @@ export function BusinessProfileSection({ profile, onUpdateProfile }: BusinessPro
     toast.success("Downloaded test vCard (.vcf)");
   };
 
+  const handleTestPDF = () => {
+    downloadBusinessCardPDF(form);
+    toast.success("Opening PDF Business Card document...");
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Header Bar */}
@@ -105,10 +116,20 @@ export function BusinessProfileSection({ profile, onUpdateProfile }: BusinessPro
           <Button
             variant="outline"
             size="sm"
+            onClick={handleTestPDF}
+            className="rounded-xl text-xs gap-1.5 border-border/80 cursor-pointer"
+          >
+            <FileText className="h-3.5 w-3.5 text-primary" />
+            <span>Test PDF Card</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
             onClick={handleTestVCard}
             className="rounded-xl text-xs gap-1.5 border-border/80 cursor-pointer"
           >
-            <Download className="h-3.5 w-3.5 text-primary" />
+            <Download className="h-3.5 w-3.5 text-muted-foreground" />
             <span>Test vCard</span>
           </Button>
 
