@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, RotateCcw, Sun, Moon, Sparkles, QrCode } from "lucide-react";
+import { ExternalLink, RotateCcw, Sun, Moon, Sparkles, QrCode, LogOut, User } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,9 +17,10 @@ import { toast } from "sonner";
 
 interface AdminHeaderProps {
   onResetDefaults?: () => void;
+  onLogout?: () => void;
 }
 
-export function AdminHeader({ onResetDefaults }: AdminHeaderProps) {
+export function AdminHeader({ onResetDefaults, onLogout }: AdminHeaderProps) {
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
@@ -49,6 +50,13 @@ export function AdminHeader({ onResetDefaults }: AdminHeaderProps) {
     }
   };
 
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout();
+      toast.info("Logged out of Admin Portal");
+    }
+  };
+
   return (
     <header className="sticky top-16 z-30 border-b border-border/70 bg-card/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
@@ -64,7 +72,7 @@ export function AdminHeader({ onResetDefaults }: AdminHeaderProps) {
               </h1>
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary border border-primary/20">
                 <Sparkles className="h-2.5 w-2.5" />
-                SaaS Admin
+                Protected Admin
               </span>
             </div>
             <p className="text-[11px] text-muted-foreground hidden sm:block">
@@ -77,12 +85,12 @@ export function AdminHeader({ onResetDefaults }: AdminHeaderProps) {
         <div className="flex items-center gap-2">
           {/* View Public Portal */}
           <Link
-            to="/qr-code"
+            to="/business-profile"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-secondary/40 px-3 py-1.5 text-xs font-semibold text-foreground transition-all hover:bg-secondary hover:text-primary"
           >
-            <span>View Public Portal</span>
+            <span>View Public Profile</span>
             <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
           </Link>
 
@@ -110,6 +118,7 @@ export function AdminHeader({ onResetDefaults }: AdminHeaderProps) {
                   size="icon"
                   aria-label="Reset Defaults"
                   className="h-8 w-8 rounded-xl border border-border/60 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                  title="Reset to Demo Defaults"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                 </Button>
@@ -134,6 +143,20 @@ export function AdminHeader({ onResetDefaults }: AdminHeaderProps) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+          )}
+
+          {/* Logout Action */}
+          {onLogout && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="h-8 rounded-xl border border-border/60 text-xs font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer gap-1.5 ml-1"
+              title="Sign Out of Admin"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </Button>
           )}
         </div>
       </div>

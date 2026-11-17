@@ -478,6 +478,55 @@ export function ExhibitionFormSection({
             </CardContent>
           </Card>
 
+          {/* Card 5: Google Sheets & Webhook Integration */}
+          <Card className="rounded-2xl border-border/80 bg-card/90 shadow-sm">
+            <CardHeader className="p-5 pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    <Layers className="h-4 w-4" />
+                  </div>
+                  <CardTitle className="text-base font-bold">Google Sheets Integration</CardTitle>
+                </div>
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold border ${
+                    form.googleSheetsWebhookUrl
+                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                      : "bg-secondary text-muted-foreground border-border/60"
+                  }`}
+                >
+                  {form.googleSheetsWebhookUrl ? "Webhook Connected" : "Local Mock Mode"}
+                </span>
+              </div>
+              <CardDescription className="text-xs">
+                Forward visitor submissions directly to a Google Sheets Apps Script endpoint or
+                webhook.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="p-5 pt-2 space-y-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="googleSheetsWebhook" className="text-xs font-semibold">
+                  Google Apps Script / Webhook URL
+                </Label>
+                <Input
+                  id="googleSheetsWebhook"
+                  placeholder="https://script.google.com/macros/s/.../exec"
+                  value={form.googleSheetsWebhookUrl || ""}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, googleSheetsWebhookUrl: e.target.value }))
+                  }
+                  className="h-9 text-xs font-mono"
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  {form.googleSheetsWebhookUrl
+                    ? "Active: Form submissions will be posted directly to your Google Sheet webhook."
+                    : "When left empty, submissions are logged locally for frontend demonstration without claiming fake cloud storage."}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Bottom Save Action */}
           <div className="flex items-center justify-end gap-3 pt-2">
             {hasChanges && (

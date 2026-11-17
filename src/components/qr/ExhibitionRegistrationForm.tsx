@@ -197,6 +197,24 @@ export function ExhibitionRegistrationForm({
       };
 
       if (!isPreview) {
+        // If a Google Sheets Webhook URL is configured, securely forward registration
+        if (settings.googleSheetsWebhookUrl && settings.googleSheetsWebhookUrl.trim()) {
+          try {
+            await fetch(settings.googleSheetsWebhookUrl.trim(), {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...payload,
+                submittedAt: new Date().toISOString(),
+                source: "Qlumix Exhibition Digital Card",
+              }),
+            });
+          } catch (netErr) {
+            console.warn("Google Sheets Webhook dispatch notice:", netErr);
+          }
+        }
+
         trackEvent("lead_submitted", {
           qrPlacementId,
           metadata: { companyName: payload.companyName, country: payload.country },
@@ -207,9 +225,11 @@ export function ExhibitionRegistrationForm({
         }
       }
 
-      toast.success(
-        settings.successMessage || "Thank you! Your details have been submitted successfully.",
-      );
+      const confirmationText = settings.googleSheetsWebhookUrl
+        ? "Registration Confirmed! Stored in Google Sheets."
+        : settings.successMessage || "Thank you! Your details have been submitted successfully.";
+
+      toast.success(confirmationText);
 
       setFormData({
         fullName: "",

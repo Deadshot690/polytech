@@ -64,6 +64,7 @@ export interface ExhibitionFormSettings {
   successMessage: string;
   fieldsConfig: FormFieldsConfig;
   allowedProducts: ProductOption[];
+  googleSheetsWebhookUrl?: string;
 }
 
 export interface ExhibitionLead {
@@ -91,7 +92,7 @@ export const DEFAULT_PROFILE: BusinessProfile = {
   whatsapp: "+91 9033118051",
   email: "info@qlumix.com",
   website: "https://qlumix.com/",
-  destinationQrUrl: "https://qlumix.com/business-card",
+  destinationQrUrl: "https://qlumix.com/business-profile",
   address: "Plot No. 111-114, Tasnim Nagar, Unn Industrial Estate, Sachin Naka",
   city: "Surat",
   state: "Gujarat",
@@ -135,7 +136,7 @@ export const INITIAL_QR_PLACEMENTS: QRPlacement[] = [
     name: "Main Reception Tabletop Stand",
     description: "Front reception desk acrylic standee in Hall 3, Booth A-42",
     type: "Tabletop",
-    destinationUrl: "https://qlumix.com/business-card",
+    destinationUrl: "https://qlumix.com/business-profile",
     active: true,
     createdAt: "2026-01-14T08:00:00.000Z",
   },
@@ -145,7 +146,7 @@ export const INITIAL_QR_PLACEMENTS: QRPlacement[] = [
     name: "Main Booth LED Wall & Backdrop",
     description: "Large format high-res scan banner on primary booth wall",
     type: "Stall Backdrop",
-    destinationUrl: "https://qlumix.com/qr-code",
+    destinationUrl: "https://qlumix.com/business-profile",
     active: true,
     createdAt: "2026-01-14T08:30:00.000Z",
   },
@@ -155,7 +156,7 @@ export const INITIAL_QR_PLACEMENTS: QRPlacement[] = [
     name: "Polymer Sample Bag Tag",
     description: "Printed QR label attached to 500g trial granule pouches",
     type: "Sample Bag",
-    destinationUrl: "https://qlumix.com/business-card",
+    destinationUrl: "https://qlumix.com/business-profile",
     active: true,
     createdAt: "2026-01-15T09:00:00.000Z",
   },
@@ -165,7 +166,7 @@ export const INITIAL_QR_PLACEMENTS: QRPlacement[] = [
     name: "Technical Catalog Backcover",
     description: "Offset printed on Technical Datasheet 2026 booklet",
     type: "Brochure",
-    destinationUrl: "https://qlumix.com/qr-code",
+    destinationUrl: "https://qlumix.com/business-profile",
     active: true,
     createdAt: "2026-01-15T09:30:00.000Z",
   },
@@ -175,7 +176,7 @@ export const INITIAL_QR_PLACEMENTS: QRPlacement[] = [
     name: "Executive Badge Lanyard",
     description: "Compact QR on Founder & CEO lanyard badge",
     type: "Executive Lanyard",
-    destinationUrl: "https://qlumix.com/business-card",
+    destinationUrl: "https://qlumix.com/business-profile",
     active: true,
     createdAt: "2026-01-16T10:00:00.000Z",
   },

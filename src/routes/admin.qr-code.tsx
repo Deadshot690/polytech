@@ -2,11 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQrAppConfig } from "@/lib/qr-config";
+import { useAdminAuth } from "@/lib/admin-auth";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { QRManagementSection } from "@/components/admin/QRManagementSection";
 import { BusinessProfileSection } from "@/components/admin/BusinessProfileSection";
 import { ExhibitionFormSection } from "@/components/admin/ExhibitionFormSection";
-import { QrCode, Building, FileText, CheckCircle2 } from "lucide-react";
+import { QrCode, Building, FileText, Loader2 } from "lucide-react";
 
 export type AdminTabType = "qr" | "profile" | "form";
 
@@ -36,6 +37,7 @@ const TABS: Array<{ id: AdminTabType; label: string; icon: typeof QrCode }> = [
 function AdminMasterPage() {
   const search = Route.useSearch();
   const navigate = useNavigate();
+  const { isAuthenticated, isReady, logout } = useAdminAuth();
 
   const {
     profile,
@@ -54,6 +56,17 @@ function AdminMasterPage() {
 
   const [activeTab, setActiveTab] = useState<AdminTabType>(initialTab);
 
+  // Authentication guard: if not authenticated, redirect to /admin/login
+  useEffect(() => {
+    if (isReady && !isAuthenticated) {
+      navigate({
+        to: "/admin/login",
+        search: { redirect: "/admin/qr-code" },
+        replace: true,
+      });
+    }
+  }, [isReady, isAuthenticated, navigate]);
+
   // Sync state with search param
   useEffect(() => {
     if (search.tab && (search.tab === "qr" || search.tab === "profile" || search.tab === "form")) {
@@ -70,10 +83,21 @@ function AdminMasterPage() {
     });
   };
 
+  if (!isReady || !isAuthenticated) {
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-background px-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="mt-3 text-xs text-muted-foreground font-medium">
+          Verifying administrator session...
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background pb-28">
       {/* SaaS Admin Header */}
-      <AdminHeader onResetDefaults={resetAllToDefaults} />
+      <AdminHeader onResetDefaults={resetAllToDefaults} onLogout={logout} />
 
       {/* Main SaaS App Container */}
       <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">

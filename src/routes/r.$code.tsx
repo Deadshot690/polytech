@@ -33,7 +33,7 @@ function RedirectQRRoute() {
       },
     });
 
-    const target = matchedPlacement?.destinationUrl || "/qr-code";
+    const target = matchedPlacement?.destinationUrl || "/business-profile";
 
     const timer = setTimeout(() => {
       if (typeof window !== "undefined") {
@@ -49,14 +49,14 @@ function RedirectQRRoute() {
             // production domain (qlumix.com) doesn't throw a 404
             if (isLocalDev || parsed.origin === window.location.origin) {
               const localPath = `${parsed.pathname}${parsed.search}${parsed.hash}`;
-              navigate({ to: localPath || "/business-card" });
+              navigate({ to: localPath || "/business-profile" });
               return;
             } else {
               window.location.href = target;
               return;
             }
           } catch {
-            navigate({ to: "/business-card" });
+            navigate({ to: "/business-profile" });
             return;
           }
         } else {

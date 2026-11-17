@@ -94,7 +94,7 @@ export function QRManagementSection({
     name: "",
     code: "",
     type: "Tabletop" as QRPlacementType,
-    destinationUrl: "https://qlumix.com/business-card",
+    destinationUrl: "https://qlumix.com/business-profile",
     description: "",
     active: true,
   });
@@ -169,7 +169,7 @@ export function QRManagementSection({
       code: cleanCode,
       name: newForm.name.trim(),
       type: newForm.type,
-      destinationUrl: newForm.destinationUrl.trim() || "https://qlumix.com/business-card",
+      destinationUrl: newForm.destinationUrl.trim() || "https://qlumix.com/business-profile",
       description: newForm.description.trim(),
       active: newForm.active,
       createdAt: new Date().toISOString(),
@@ -182,7 +182,7 @@ export function QRManagementSection({
       name: "",
       code: "",
       type: "Tabletop",
-      destinationUrl: "https://qlumix.com/business-card",
+      destinationUrl: "https://qlumix.com/business-profile",
       description: "",
       active: true,
     });
@@ -514,7 +514,7 @@ export function QRManagementSection({
               </Label>
               <Input
                 id="qr-destination"
-                placeholder="https://qlumix.com/business-card"
+                placeholder="https://qlumix.com/business-profile"
                 value={newForm.destinationUrl}
                 onChange={(e) =>
                   setNewForm((prev) => ({ ...prev, destinationUrl: e.target.value }))
