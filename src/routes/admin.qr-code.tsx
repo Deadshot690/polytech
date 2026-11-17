@@ -1,210 +1,182 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useQrAppConfig } from "@/lib/qr-config";
-import { useQrAnalytics, DateRange } from "@/lib/qr-analytics";
 import { AdminHeader } from "@/components/admin/AdminHeader";
-import { OverviewDashboard } from "@/components/admin/OverviewDashboard";
 import { QRManagementSection } from "@/components/admin/QRManagementSection";
-import { ExhibitionManagementSection } from "@/components/admin/ExhibitionManagementSection";
 import { BusinessProfileSection } from "@/components/admin/BusinessProfileSection";
 import { ExhibitionFormSection } from "@/components/admin/ExhibitionFormSection";
-import { LeadManagementSection } from "@/components/admin/LeadManagementSection";
-import { ReportsAnalyticsSection } from "@/components/admin/ReportsAnalyticsSection";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  LayoutDashboard,
-  QrCode,
-  Building2,
-  FileText,
-  Users,
-  BarChart3,
-  CalendarCheck2,
-} from "lucide-react";
+import { QrCode, Building, FileText, CheckCircle2 } from "lucide-react";
+
+export type AdminTabType = "qr" | "profile" | "form";
+
+interface AdminSearch {
+  tab?: string;
+}
 
 export const Route = createFileRoute("/admin/qr-code")({
+  validateSearch: (search: Record<string, unknown>): AdminSearch => ({
+    tab: typeof search.tab === "string" ? search.tab : undefined,
+  }),
   head: () => ({
     meta: [
-      { title: "Business QR & Exhibition Analytics Management — Qlumix" },
+      { title: "QR Management & Digital Business Card — Qlumix Admin" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: AdminMasterPage,
 });
 
+const TABS: Array<{ id: AdminTabType; label: string; icon: typeof QrCode }> = [
+  { id: "qr", label: "QR Code Management", icon: QrCode },
+  { id: "profile", label: "Business Profile", icon: Building },
+  { id: "form", label: "Exhibition Form Settings", icon: FileText },
+];
+
 function AdminMasterPage() {
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+
   const {
     profile,
-    exhibitions,
-    activeExhibition,
-    activeExhibitionId,
+    formSettings,
     placements,
-    leads,
     updateProfile,
-    setActiveExhibitionId,
-    saveExhibition,
-    deleteExhibition,
+    updateFormSettings,
     savePlacement,
     togglePlacementActive,
     deletePlacement,
-    updateLead,
-    deleteLead,
     resetAllToDefaults,
   } = useQrAppConfig();
 
-  const [activeTab, setActiveTab] = useState<string>("overview");
-  const [dateRange, setDateRange] = useState<DateRange>("7d");
+  const initialTab: AdminTabType =
+    search.tab === "profile" || search.tab === "form" ? (search.tab as AdminTabType) : "qr";
 
-  // Dynamically computed analytics deriving from shared data and demo events
-  const analytics = useQrAnalytics(exhibitions, placements, leads, activeExhibitionId, dateRange);
+  const [activeTab, setActiveTab] = useState<AdminTabType>(initialTab);
+
+  // Sync state with search param
+  useEffect(() => {
+    if (search.tab && (search.tab === "qr" || search.tab === "profile" || search.tab === "form")) {
+      setActiveTab(search.tab as AdminTabType);
+    }
+  }, [search.tab]);
+
+  const handleTabChange = (tabId: AdminTabType) => {
+    setActiveTab(tabId);
+    navigate({
+      to: "/admin/qr-code",
+      search: { tab: tabId },
+      replace: true,
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-28">
       {/* SaaS Admin Header */}
-      <AdminHeader
-        exhibitions={exhibitions}
-        activeExhibitionId={activeExhibitionId}
-        onSelectExhibition={setActiveExhibitionId}
-        dateRange={dateRange}
-        onSelectDateRange={setDateRange}
-        onResetDefaults={resetAllToDefaults}
-      />
+      <AdminHeader onResetDefaults={resetAllToDefaults} />
 
       {/* Main SaaS App Container */}
       <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          {/* Main Top 6 Navigation Tabs */}
-          <div className="overflow-x-auto pb-1">
-            <TabsList className="h-11 inline-flex w-auto rounded-2xl bg-secondary/50 p-1 border border-border/70">
-              <TabsTrigger
-                value="overview"
-                className="rounded-xl px-3.5 py-1.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-card data-[state=active]:shadow-sm"
-              >
-                <LayoutDashboard className="h-3.5 w-3.5" />
-                Overview
-              </TabsTrigger>
+        {/* Simplified 3-Tab SaaS Navigation Bar */}
+        <div className="mb-8 flex items-center justify-between border-b border-border/60 pb-4">
+          <div className="relative inline-flex items-center gap-1.5 rounded-2xl bg-secondary/50 p-1.5 border border-border/70 backdrop-blur-md">
+            {TABS.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
 
-              <TabsTrigger
-                value="qr"
-                className="rounded-xl px-3.5 py-1.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-card data-[state=active]:shadow-sm"
-              >
-                <QrCode className="h-3.5 w-3.5" />
-                QR Management ({placements.length})
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="exhibitions"
-                className="rounded-xl px-3.5 py-1.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-card data-[state=active]:shadow-sm"
-              >
-                <CalendarCheck2 className="h-3.5 w-3.5" />
-                Exhibitions ({exhibitions.length})
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="profile"
-                className="rounded-xl px-3.5 py-1.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-card data-[state=active]:shadow-sm"
-              >
-                <Building2 className="h-3.5 w-3.5" />
-                Business Profile
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="forms"
-                className="rounded-xl px-3.5 py-1.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-card data-[state=active]:shadow-sm"
-              >
-                <FileText className="h-3.5 w-3.5" />
-                Exhibition Forms
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="leads"
-                className="rounded-xl px-3.5 py-1.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-card data-[state=active]:shadow-sm"
-              >
-                <Users className="h-3.5 w-3.5" />
-                Lead Management ({leads.length})
-              </TabsTrigger>
-
-              <TabsTrigger
-                value="analytics"
-                className="rounded-xl px-3.5 py-1.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-card data-[state=active]:shadow-sm"
-              >
-                <BarChart3 className="h-3.5 w-3.5" />
-                Reports & Analytics
-              </TabsTrigger>
-            </TabsList>
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`relative z-10 flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold transition-colors cursor-pointer ${
+                    isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon
+                    className={`h-4 w-4 ${isActive ? "text-primary" : "text-muted-foreground"}`}
+                  />
+                  <span>{tab.label}</span>
+                  {tab.id === "qr" && (
+                    <span
+                      className={`ml-1 rounded-full px-1.5 py-0.2 text-[10px] font-mono font-bold ${
+                        isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {placements.length}
+                    </span>
+                  )}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeAdminTabPill"
+                      className="absolute inset-0 z-[-1] rounded-xl bg-card shadow-sm border border-border/80"
+                      transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
 
-          {/* TAB 1: OVERVIEW DASHBOARD */}
-          <TabsContent value="overview">
-            <OverviewDashboard
-              summary={analytics.summary}
-              timeline={analytics.timeline}
-              exhibitionPerformance={analytics.exhibitionPerformance}
-              funnelStages={analytics.funnelStages}
-              recentActivity={analytics.recentActivity}
-              onNavigateToTab={setActiveTab}
+          {/* Quick Status Indicator */}
+          <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
+            <span
+              className={`flex h-2 w-2 rounded-full ${
+                formSettings.formEnabled ? "bg-emerald-500" : "bg-muted-foreground"
+              }`}
             />
-          </TabsContent>
+            <span>Form {formSettings.formEnabled ? "Active" : "Disabled"}</span>
+            <span>•</span>
+            <span>{placements.filter((p) => p.active).length} Active QRs</span>
+          </div>
+        </div>
 
-          {/* TAB 2: QR MANAGEMENT */}
-          <TabsContent value="qr">
-            <QRManagementSection
-              placements={placements}
-              exhibitions={exhibitions}
-              placementMetrics={analytics.placementMetrics}
-              onSavePlacement={savePlacement}
-              onToggleActive={togglePlacementActive}
-              onDeletePlacement={deletePlacement}
-            />
-          </TabsContent>
+        {/* Tab View Content with Smooth Transitions */}
+        <AnimatePresence mode="wait">
+          {activeTab === "qr" && (
+            <motion.div
+              key="tab-qr"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <QRManagementSection
+                placements={placements}
+                onSavePlacement={savePlacement}
+                onToggleActive={togglePlacementActive}
+                onDeletePlacement={deletePlacement}
+              />
+            </motion.div>
+          )}
 
-          {/* TAB 3: EXHIBITIONS MANAGEMENT */}
-          <TabsContent value="exhibitions">
-            <ExhibitionManagementSection
-              exhibitions={exhibitions}
-              activeExhibitionId={activeExhibitionId}
-              onSelectExhibition={setActiveExhibitionId}
-              onSaveExhibition={saveExhibition}
-              onDeleteExhibition={deleteExhibition}
-            />
-          </TabsContent>
+          {activeTab === "profile" && (
+            <motion.div
+              key="tab-profile"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <BusinessProfileSection profile={profile} onUpdateProfile={updateProfile} />
+            </motion.div>
+          )}
 
-          {/* TAB 4: BUSINESS PROFILE */}
-          <TabsContent value="profile">
-            <BusinessProfileSection profile={profile} onUpdateProfile={updateProfile} />
-          </TabsContent>
-
-          {/* TAB 5: EXHIBITION FORMS */}
-          <TabsContent value="forms">
-            <ExhibitionFormSection
-              exhibitions={exhibitions}
-              activeExhibition={activeExhibition}
-              onSelectExhibition={setActiveExhibitionId}
-              onSaveExhibition={saveExhibition}
-            />
-          </TabsContent>
-
-          {/* TAB 6: LEAD MANAGEMENT */}
-          <TabsContent value="leads">
-            <LeadManagementSection
-              leads={leads}
-              exhibitions={exhibitions}
-              placements={placements}
-              onUpdateLead={updateLead}
-              onDeleteLead={deleteLead}
-            />
-          </TabsContent>
-
-          {/* TAB 7: REPORTS & ANALYTICS */}
-          <TabsContent value="analytics">
-            <ReportsAnalyticsSection
-              summary={analytics.summary}
-              timeline={analytics.timeline}
-              exhibitionPerformance={analytics.exhibitionPerformance}
-              funnelStages={analytics.funnelStages}
-              productDemand={analytics.productDemand}
-            />
-          </TabsContent>
-        </Tabs>
+          {activeTab === "form" && (
+            <motion.div
+              key="tab-form"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ExhibitionFormSection
+                formSettings={formSettings}
+                onUpdateFormSettings={updateFormSettings}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

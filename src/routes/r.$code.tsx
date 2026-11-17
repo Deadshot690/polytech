@@ -37,16 +37,27 @@ function RedirectQRRoute() {
 
     const timer = setTimeout(() => {
       if (typeof window !== "undefined") {
+        const isLocalDev =
+          window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1" ||
+          window.location.hostname.includes("192.168.");
+
         if (target.startsWith("http://") || target.startsWith("https://")) {
           try {
             const parsed = new URL(target);
-            if (parsed.origin === window.location.origin) {
-              navigate({ to: parsed.pathname + parsed.search });
+            // In local development or if domain matches origin, navigate locally so un-deployed
+            // production domain (qlumix.com) doesn't throw a 404
+            if (isLocalDev || parsed.origin === window.location.origin) {
+              const localPath = `${parsed.pathname}${parsed.search}${parsed.hash}`;
+              navigate({ to: localPath || "/business-card" });
+              return;
             } else {
               window.location.href = target;
+              return;
             }
           } catch {
-            window.location.href = target;
+            navigate({ to: "/business-card" });
+            return;
           }
         } else {
           navigate({ to: target });

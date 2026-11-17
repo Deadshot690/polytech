@@ -1,12 +1,16 @@
-import { useState } from "react";
-import { Exhibition } from "@/lib/qr-config";
+import { useState, useEffect, useMemo } from "react";
+import {
+  ExhibitionFormSettings,
+  FieldRequirement,
+  FormFieldsConfig,
+  ProductOption,
+} from "@/lib/qr-config";
 import { ExhibitionRegistrationForm } from "@/components/qr/ExhibitionRegistrationForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import {
@@ -15,324 +19,533 @@ import {
   Monitor,
   CheckCircle2,
   Plus,
-  X,
+  Trash2,
   Sparkles,
   Save,
-  Building2,
+  RotateCcw,
+  SlidersHorizontal,
+  Package,
+  Layers,
+  HelpCircle,
 } from "lucide-react";
 
 interface ExhibitionFormSectionProps {
-  exhibitions: Exhibition[];
-  activeExhibition: Exhibition;
-  onSelectExhibition: (id: string) => void;
-  onSaveExhibition: (exhibition: Exhibition) => void;
+  formSettings: ExhibitionFormSettings;
+  onUpdateFormSettings: (patch: Partial<ExhibitionFormSettings>) => void;
 }
 
-export function ExhibitionFormSection({
-  exhibitions,
-  activeExhibition,
-  onSelectExhibition,
-  onSaveExhibition,
-}: ExhibitionFormSectionProps) {
-  const [form, setForm] = useState<Exhibition>(activeExhibition);
-  const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
-  const [newProductInput, setNewProductInput] = useState("");
+const FIELD_LABELS: Record<keyof FormFieldsConfig, { label: string; description: string }> = {
+  fullName: {
+    label: "Full Name",
+    description: "Visitor or delegate full legal/professional name",
+  },
+  companyName: {
+    label: "Company Name",
+    description: "Organization, plastic processor, or brand name",
+  },
+  mobileNumber: {
+    label: "Mobile Number",
+    description: "Direct phone number for WhatsApp and callback",
+  },
+  emailAddress: {
+    label: "Email Address",
+    description: "Official business email for TDS and sample quotes",
+  },
+  country: {
+    label: "Country",
+    description: "Dropdown of international and domestic markets",
+  },
+  interestedProducts: {
+    label: "Interested Products",
+    description: "Multi-select chips for polymer grades and compounds",
+  },
+  message: {
+    label: "Message / Requirement",
+    description: "Open text requirement, annual tonnage, application",
+  },
+};
 
-  const handleToggleActive = (checked: boolean) => {
-    const updated = { ...form, formEnabled: checked };
-    setForm(updated);
-    onSaveExhibition(updated);
+export function ExhibitionFormSection({
+  formSettings,
+  onUpdateFormSettings,
+}: ExhibitionFormSectionProps) {
+  const [form, setForm] = useState<ExhibitionFormSettings>(formSettings);
+  const [previewDevice, setPreviewDevice] = useState<"desktop" | "mobile">("desktop");
+  const [newProductName, setNewProductName] = useState("");
+
+  // Sync state if external changes happen
+  useEffect(() => {
+    setForm(formSettings);
+  }, [formSettings]);
+
+  const hasChanges = useMemo(() => {
+    return JSON.stringify(form) !== JSON.stringify(formSettings);
+  }, [form, formSettings]);
+
+  const handleMasterToggle = (checked: boolean) => {
+    const next = { ...form, formEnabled: checked };
+    setForm(next);
+    onUpdateFormSettings({ formEnabled: checked });
     toast.success(
       checked
-        ? `Exhibition Form for "${form.name}" is now ACTIVE on public page`
-        : `Exhibition Form for "${form.name}" is now INACTIVE (hidden) on public page`,
+        ? "Exhibition Form is now ACTIVE (Visible on /qr-code)"
+        : "Exhibition Form is now INACTIVE (Hidden on /qr-code, Card expanded)",
     );
   };
 
+  const handleFieldRequirementChange = (
+    field: keyof FormFieldsConfig,
+    requirement: FieldRequirement,
+  ) => {
+    setForm((prev) => ({
+      ...prev,
+      fieldsConfig: {
+        ...prev.fieldsConfig,
+        [field]: requirement,
+      },
+    }));
+  };
+
   const handleAddProduct = () => {
-    const trimmed = newProductInput.trim();
+    const trimmed = newProductName.trim();
     if (!trimmed) return;
-    if (form.allowedProducts.includes(trimmed)) {
-      toast.error("Product already exists in options");
+    if (form.allowedProducts.some((p) => p.name.toLowerCase() === trimmed.toLowerCase())) {
+      toast.error("Product name already exists in catalog");
       return;
     }
-    const updated = { ...form, allowedProducts: [...form.allowedProducts, trimmed] };
-    setForm(updated);
-    setNewProductInput("");
-  };
 
-  const handleRemoveProduct = (prod: string) => {
-    if (form.allowedProducts.length <= 1) {
-      toast.error("At least one product option is required");
-      return;
-    }
-    const updated = {
-      ...form,
-      allowedProducts: form.allowedProducts.filter((p) => p !== prod),
+    const newProd: ProductOption = {
+      id: `prod-${Date.now()}`,
+      name: trimmed,
+      enabled: true,
     };
-    setForm(updated);
+
+    setForm((prev) => ({
+      ...prev,
+      allowedProducts: [...prev.allowedProducts, newProd],
+    }));
+    setNewProductName("");
+    toast.success(`Added product "${trimmed}"`);
   };
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSaveExhibition(form);
-    toast.success(`Saved form settings for ${form.name}`);
+  const handleToggleProduct = (id: string) => {
+    setForm((prev) => ({
+      ...prev,
+      allowedProducts: prev.allowedProducts.map((p) =>
+        p.id === id ? { ...p, enabled: !p.enabled } : p,
+      ),
+    }));
+  };
+
+  const handleDeleteProduct = (id: string) => {
+    if (form.allowedProducts.length <= 1) {
+      toast.error("At least one product option must remain");
+      return;
+    }
+    setForm((prev) => ({
+      ...prev,
+      allowedProducts: prev.allowedProducts.filter((p) => p.id !== id),
+    }));
+  };
+
+  const handleSaveAll = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    onUpdateFormSettings(form);
+    toast.success("Exhibition form settings saved successfully!");
+  };
+
+  const handleReset = () => {
+    setForm(formSettings);
+    toast.info("Reverted unsaved form edits");
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-4">
+      {/* Top Header Bar */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-display text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
-            <FileText className="h-5 w-5 text-primary" />
-            Exhibition Form & Product Catalog Controls
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            Configure attendee form visibility, heading narrative, and selectable polymer
-            compounding products.
+          <div className="flex items-center gap-2">
+            <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
+              Exhibition Form Settings
+            </h2>
+            {hasChanges && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
+                Unsaved Edits
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Manage public visitor registration form visibility, copy, required fields, and polymer
+            products.
           </p>
         </div>
 
-        {/* Exhibition Selector */}
-        <div className="flex items-center gap-2 text-xs">
-          <Label className="text-muted-foreground">Selected Event:</Label>
-          <select
-            value={activeExhibition.id}
-            onChange={(e) => {
-              const selected = exhibitions.find((ex) => ex.id === e.target.value);
-              if (selected) {
-                onSelectExhibition(selected.id);
-                setForm(selected);
-              }
-            }}
-            aria-label="Select exhibition to configure"
-            className="rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground font-semibold"
+        <div className="flex items-center gap-2">
+          {hasChanges && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              className="rounded-xl text-xs gap-1.5 cursor-pointer"
+            >
+              <RotateCcw className="h-3.5 w-3.5 text-muted-foreground" />
+              <span>Discard</span>
+            </Button>
+          )}
+
+          <Button
+            onClick={handleSaveAll}
+            disabled={!hasChanges}
+            className="btn-primary rounded-xl font-semibold shadow-md gap-1.5 cursor-pointer"
           >
-            {exhibitions.map((exh) => (
-              <option key={exh.id} value={exh.id}>
-                {exh.name}
-              </option>
-            ))}
-          </select>
+            <Save className="h-4 w-4" />
+            <span>Save Settings</span>
+          </Button>
         </div>
       </div>
 
+      {/* Main Two-Column Layout */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 items-start">
-        {/* Form Configuration Inputs */}
-        <div className="lg:col-span-7 space-y-6">
-          {/* Active / Inactive Status Card */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border-2 border-primary/20 bg-primary/5 p-5">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-foreground">
-                  Public Form Status: {form.name}
-                </span>
-                <Badge variant={form.formEnabled ? "default" : "secondary"} className="text-xs">
-                  {form.formEnabled ? "ACTIVE (Visible)" : "INACTIVE (Hidden)"}
-                </Badge>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                When enabled, the registration form appears beside the digital business card. When
-                disabled, the form is completely hidden and the card expands.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Label htmlFor="formStatusToggle" className="text-xs font-semibold cursor-pointer">
-                {form.formEnabled ? "Active" : "Hidden"}
-              </Label>
-              <Switch
-                id="formStatusToggle"
-                checked={form.formEnabled}
-                onCheckedChange={handleToggleActive}
-              />
-            </div>
-          </div>
+        {/* Left Column: Form Settings Cards */}
+        <div className="space-y-6 lg:col-span-7">
+          {/* Card 1: Master Form Status Toggle */}
+          <Card
+            className={`rounded-2xl border transition-all duration-200 ${
+              form.formEnabled
+                ? "border-emerald-500/40 bg-emerald-500/5 shadow-sm"
+                : "border-border/70 bg-secondary/20"
+            }`}
+          >
+            <CardHeader className="p-5 pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className={`flex h-3 w-3 rounded-full ${
+                      form.formEnabled ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground"
+                    }`}
+                  />
+                  <CardTitle className="text-base font-bold">
+                    {form.formEnabled
+                      ? "Form Active — Visible to Visitors"
+                      : "Form Inactive — Hidden on Public Portal"}
+                  </CardTitle>
+                </div>
 
-          <Card className="shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-base font-bold">Form Text & Product Offerings</CardTitle>
-              <CardDescription className="text-xs">
-                Customize titles and product chips displayed to attendees visiting this exhibition
-                booth.
+                <Switch
+                  checked={form.formEnabled}
+                  onCheckedChange={handleMasterToggle}
+                  aria-label="Toggle exhibition form visibility"
+                />
+              </div>
+
+              <CardDescription className="text-xs pt-1">
+                {form.formEnabled
+                  ? "Visitors accessing /qr-code see the balanced two-column layout with both the digital card and the visitor registration form."
+                  : "The registration form is completely hidden from public visitors. The Digital Business Card automatically expands to full width and centers."}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSave} className="space-y-4 text-xs">
+          </Card>
+
+          {/* Card 2: Form Content & Narrative */}
+          <Card className="rounded-2xl border-border/80 bg-card/90 shadow-sm">
+            <CardHeader className="p-5 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10 text-primary">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-base font-bold">Form Content & Copy</CardTitle>
+              </div>
+              <CardDescription className="text-xs">
+                Customize titles, narrative descriptions, button labels, and feedback messages.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="p-5 pt-2 space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="formHeading" className="text-xs font-semibold">
+                  Form Heading
+                </Label>
+                <Input
+                  id="formHeading"
+                  value={form.formHeading}
+                  onChange={(e) => setForm((prev) => ({ ...prev, formHeading: e.target.value }))}
+                  className="h-9 text-xs"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="formDescription" className="text-xs font-semibold">
+                  Form Subtitle / Narrative
+                </Label>
+                <Textarea
+                  id="formDescription"
+                  rows={2}
+                  value={form.formDescription}
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, formDescription: e.target.value }))
+                  }
+                  className="text-xs resize-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="formHeading" className="text-xs font-semibold">
-                    Form Heading
+                  <Label htmlFor="submitButtonLabel" className="text-xs font-semibold">
+                    Submit Button Text
                   </Label>
                   <Input
-                    id="formHeading"
-                    value={form.formHeading}
-                    onChange={(e) => setForm((f) => ({ ...f, formHeading: e.target.value }))}
-                    className="text-xs font-semibold"
+                    id="submitButtonLabel"
+                    value={form.submitButtonLabel}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, submitButtonLabel: e.target.value }))
+                    }
+                    className="h-9 text-xs"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="formDescription" className="text-xs font-semibold">
-                    Form Subtitle / Instructions
+                  <Label htmlFor="successMessage" className="text-xs font-semibold">
+                    Success Toast Message
                   </Label>
-                  <Textarea
-                    id="formDescription"
-                    rows={2}
-                    value={form.formDescription}
-                    onChange={(e) => setForm((f) => ({ ...f, formDescription: e.target.value }))}
-                    className="text-xs"
+                  <Input
+                    id="successMessage"
+                    value={form.successMessage}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, successMessage: e.target.value }))
+                    }
+                    className="h-9 text-xs"
                   />
                 </div>
-
-                {/* Products Pills Manager */}
-                <div className="space-y-2 pt-2 border-t border-border/60">
-                  <Label className="text-xs font-semibold flex items-center justify-between">
-                    <span>Interested Polymer Products Catalog</span>
-                    <span className="text-[11px] text-muted-foreground font-normal">
-                      {form.allowedProducts.length} options active
-                    </span>
-                  </Label>
-
-                  <div className="flex flex-wrap gap-2">
-                    {form.allowedProducts.map((prod) => (
-                      <span
-                        key={prod}
-                        className="inline-flex items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary"
-                      >
-                        {prod}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveProduct(prod)}
-                          className="hover:text-destructive transition-colors ml-0.5"
-                          title="Remove option"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Add Product Option Input */}
-                  <div className="flex items-center gap-2 pt-2">
-                    <Input
-                      placeholder="Add polymer grade e.g. Glass-Filled PPCP..."
-                      value={newProductInput}
-                      onChange={(e) => setNewProductInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleAddProduct();
-                        }
-                      }}
-                      className="text-xs h-8"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleAddProduct}
-                      className="h-8 text-xs font-medium px-3 shrink-0"
-                    >
-                      <Plus className="mr-1 h-3.5 w-3.5" />
-                      Add Grade
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Form Fields Config */}
-                <div className="space-y-2 pt-2 border-t border-border/60">
-                  <Label className="text-xs font-semibold">Active Form Fields</Label>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    {[
-                      "Full Name (Required)",
-                      "Company Name (Required)",
-                      "Mobile Number (Required)",
-                      "Email Address (Required)",
-                      "Country (Required)",
-                      "Interested Products (Required)",
-                      "Message / Requirement (Optional)",
-                    ].map((field) => (
-                      <div
-                        key={field}
-                        className="flex items-center gap-2 rounded-lg border border-border/70 bg-secondary/30 p-2 text-foreground"
-                      >
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                        <span className="truncate">{field}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Button type="submit" size="sm" className="btn-primary text-xs gap-1.5">
-                    <Save className="h-4 w-4" />
-                    Save Form Settings
-                  </Button>
-                </div>
-              </form>
+              </div>
             </CardContent>
           </Card>
+
+          {/* Card 3: Form Fields Configurator (Required / Optional / Disabled) */}
+          <Card className="rounded-2xl border-border/80 bg-card/90 shadow-sm">
+            <CardHeader className="p-5 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                  <SlidersHorizontal className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-base font-bold">Field Requirement Controls</CardTitle>
+              </div>
+              <CardDescription className="text-xs">
+                Control which fields are required, optional, or disabled (hidden) for visitors.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="p-5 pt-2">
+              <div className="divide-y divide-border/60">
+                {(Object.keys(form.fieldsConfig) as Array<keyof FormFieldsConfig>).map(
+                  (fieldKey) => {
+                    const meta = FIELD_LABELS[fieldKey];
+                    const currentVal = form.fieldsConfig[fieldKey];
+
+                    return (
+                      <div
+                        key={fieldKey}
+                        className="py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+                      >
+                        <div>
+                          <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                            <span>{meta.label}</span>
+                            {currentVal === "required" && (
+                              <span className="text-[10px] text-destructive font-semibold">*</span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-muted-foreground">{meta.description}</p>
+                        </div>
+
+                        {/* Segmented Pill Control */}
+                        <div className="inline-flex rounded-xl bg-secondary/50 p-1 border border-border/60">
+                          <button
+                            type="button"
+                            onClick={() => handleFieldRequirementChange(fieldKey, "required")}
+                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
+                              currentVal === "required"
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            Required
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleFieldRequirementChange(fieldKey, "optional")}
+                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
+                              currentVal === "optional"
+                                ? "bg-blue-600/20 text-blue-600 dark:text-blue-400 shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            Optional
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleFieldRequirementChange(fieldKey, "disabled")}
+                            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all cursor-pointer ${
+                              currentVal === "disabled"
+                                ? "bg-muted text-muted-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            Disabled
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  },
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card 4: Product Interest Options Manager */}
+          <Card className="rounded-2xl border-border/80 bg-card/90 shadow-sm">
+            <CardHeader className="p-5 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+                  <Package className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-base font-bold">Product Interest Catalog</CardTitle>
+              </div>
+              <CardDescription className="text-xs">
+                Selectable polymer grades and compound solutions displayed as selection chips.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="p-5 pt-2 space-y-4">
+              {/* Add New Product Input */}
+              <div className="flex gap-2">
+                <Input
+                  placeholder="e.g. PCR HDPE Blow Moulding Grade"
+                  value={newProductName}
+                  onChange={(e) => setNewProductName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddProduct();
+                    }
+                  }}
+                  className="h-9 text-xs"
+                />
+                <Button
+                  type="button"
+                  onClick={handleAddProduct}
+                  className="btn-primary h-9 rounded-xl px-3 text-xs font-semibold gap-1.5 cursor-pointer shrink-0"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Add Product</span>
+                </Button>
+              </div>
+
+              {/* Product Items List */}
+              <div className="space-y-2 pt-1">
+                {form.allowedProducts.map((prod) => (
+                  <div
+                    key={prod.id}
+                    className="flex items-center justify-between rounded-xl border border-border/70 bg-secondary/30 p-2.5 text-xs transition-all hover:bg-secondary/50"
+                  >
+                    <div className="flex items-center gap-2.5 flex-1 min-w-0 mr-2">
+                      <Switch
+                        checked={prod.enabled}
+                        onCheckedChange={() => handleToggleProduct(prod.id)}
+                        aria-label={`Toggle ${prod.name}`}
+                      />
+                      <span
+                        className={`font-medium truncate ${
+                          prod.enabled ? "text-foreground" : "text-muted-foreground line-through"
+                        }`}
+                      >
+                        {prod.name}
+                      </span>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteProduct(prod.id)}
+                      className="h-7 w-7 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0"
+                      title="Remove product option"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Bottom Save Action */}
+          <div className="flex items-center justify-end gap-3 pt-2">
+            {hasChanges && (
+              <span className="text-xs text-muted-foreground">You have unsaved form edits</span>
+            )}
+            <Button
+              onClick={handleSaveAll}
+              disabled={!hasChanges}
+              className="btn-primary rounded-xl font-semibold shadow-md px-6 gap-2 cursor-pointer"
+            >
+              <Save className="h-4 w-4" />
+              <span>Save Exhibition Form</span>
+            </Button>
+          </div>
         </div>
 
-        {/* Live Device Frame Preview */}
-        <div className="lg:col-span-5 space-y-3 lg:sticky lg:top-28">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5 text-primary" />
-              Live Visitor Preview
-            </span>
+        {/* Right Column: Sticky Live Form Preview */}
+        <div className="space-y-4 lg:sticky lg:top-24 lg:col-span-5">
+          <div className="flex items-center justify-between border-b border-border/60 pb-3">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-foreground">
+                Live Form Preview
+              </span>
+            </div>
 
-            {/* Device Switcher */}
-            <div className="flex items-center rounded-lg border border-border bg-card p-0.5 text-xs">
+            {/* Device Viewport Toggle */}
+            <div className="flex items-center gap-1 rounded-xl bg-secondary/50 p-1 border border-border/60 text-[11px]">
               <button
                 type="button"
                 onClick={() => setPreviewDevice("desktop")}
-                className={`flex items-center gap-1 rounded px-2 py-1 ${
+                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 font-semibold transition-all cursor-pointer ${
                   previewDevice === "desktop"
-                    ? "bg-secondary font-semibold text-foreground"
-                    : "text-muted-foreground"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Monitor className="h-3 w-3" />
-                Desktop
+                <span>Desktop</span>
               </button>
               <button
                 type="button"
                 onClick={() => setPreviewDevice("mobile")}
-                className={`flex items-center gap-1 rounded px-2 py-1 ${
+                className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 font-semibold transition-all cursor-pointer ${
                   previewDevice === "mobile"
-                    ? "bg-secondary font-semibold text-foreground"
-                    : "text-muted-foreground"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <Smartphone className="h-3 w-3" />
-                Mobile
+                <span>Mobile (375px)</span>
               </button>
             </div>
           </div>
 
-          {/* Device Frame */}
-          <div
-            className={`mx-auto rounded-3xl border-4 transition-all duration-300 ${
-              previewDevice === "mobile"
-                ? "max-w-[360px] border-slate-700 bg-slate-900/50 p-2 shadow-2xl"
-                : "max-w-full border-border bg-card/60 p-1"
-            }`}
-          >
-            {previewDevice === "mobile" && (
-              <div className="mb-2 flex justify-center">
-                <span className="h-3 w-16 rounded-full bg-slate-700" />
+          {/* Device Mock Frame */}
+          {previewDevice === "mobile" ? (
+            <div className="mx-auto max-w-[375px] rounded-[36px] border-4 border-slate-800 bg-background p-3 shadow-2xl overflow-hidden">
+              <div className="mx-auto h-4 w-28 rounded-full bg-slate-800 mb-3" />
+              <div className="max-h-[640px] overflow-y-auto pr-1">
+                <ExhibitionRegistrationForm settings={form} isPreview={true} />
               </div>
-            )}
-
-            <div className="overflow-hidden rounded-2xl">
-              <ExhibitionRegistrationForm
-                settings={form}
-                onSubmitSuccess={() => {
-                  toast.info("Mock preview submission completed");
-                }}
-              />
             </div>
-          </div>
+          ) : (
+            <div className="w-full">
+              <ExhibitionRegistrationForm settings={form} isPreview={true} />
+            </div>
+          )}
         </div>
       </div>
     </div>

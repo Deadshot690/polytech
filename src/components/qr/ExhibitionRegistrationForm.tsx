@@ -207,7 +207,9 @@ export function ExhibitionRegistrationForm({
         }
       }
 
-      toast.success(settings.successMessage || "Thank you! Your details have been submitted successfully.");
+      toast.success(
+        settings.successMessage || "Thank you! Your details have been submitted successfully.",
+      );
 
       setFormData({
         fullName: "",
@@ -247,11 +249,15 @@ export function ExhibitionRegistrationForm({
               Visitor Registration
             </span>
           </div>
-          <h2 id={formHeadingId} className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground md:text-3xl">
+          <h2
+            id={formHeadingId}
+            className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground md:text-3xl"
+          >
             {settings.formHeading || "Let's Connect at the Exhibition"}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
-            {settings.formDescription || "Share your details and our team will get in touch with you."}
+            {settings.formDescription ||
+              "Share your details and our team will get in touch with you."}
           </p>
         </div>
 
@@ -266,7 +272,8 @@ export function ExhibitionRegistrationForm({
             <div>
               <div className="text-sm font-semibold">Registration Confirmed</div>
               <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
-                {settings.successMessage || "Thank you! Your details have been submitted successfully."}
+                {settings.successMessage ||
+                  "Thank you! Your details have been submitted successfully."}
               </p>
             </div>
           </motion.div>
@@ -279,7 +286,10 @@ export function ExhibitionRegistrationForm({
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {fields.fullName !== "disabled" && (
                 <div className="space-y-1.5">
-                  <Label htmlFor="reg-fullName" className="text-xs font-semibold flex items-center gap-1.5">
+                  <Label
+                    htmlFor="reg-fullName"
+                    className="text-xs font-semibold flex items-center gap-1.5"
+                  >
                     <User className="h-3.5 w-3.5 text-muted-foreground" />
                     Full Name{" "}
                     {fields.fullName === "required" ? (
@@ -295,7 +305,9 @@ export function ExhibitionRegistrationForm({
                     value={formData.fullName}
                     onChange={(e) => handleInputChange("fullName", e.target.value)}
                     disabled={isSubmitting}
-                    className={errors.fullName ? "border-destructive focus-visible:ring-destructive" : ""}
+                    className={
+                      errors.fullName ? "border-destructive focus-visible:ring-destructive" : ""
+                    }
                   />
                   {errors.fullName && (
                     <p className="text-[11px] font-medium text-destructive">{errors.fullName}</p>
@@ -305,7 +317,10 @@ export function ExhibitionRegistrationForm({
 
               {fields.companyName !== "disabled" && (
                 <div className="space-y-1.5">
-                  <Label htmlFor="reg-companyName" className="text-xs font-semibold flex items-center gap-1.5">
+                  <Label
+                    htmlFor="reg-companyName"
+                    className="text-xs font-semibold flex items-center gap-1.5"
+                  >
                     <Building className="h-3.5 w-3.5 text-muted-foreground" />
                     Company Name{" "}
                     {fields.companyName === "required" ? (
@@ -321,7 +336,9 @@ export function ExhibitionRegistrationForm({
                     value={formData.companyName}
                     onChange={(e) => handleInputChange("companyName", e.target.value)}
                     disabled={isSubmitting}
-                    className={errors.companyName ? "border-destructive focus-visible:ring-destructive" : ""}
+                    className={
+                      errors.companyName ? "border-destructive focus-visible:ring-destructive" : ""
+                    }
                   />
                   {errors.companyName && (
                     <p className="text-[11px] font-medium text-destructive">{errors.companyName}</p>
@@ -336,7 +353,10 @@ export function ExhibitionRegistrationForm({
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {fields.mobileNumber !== "disabled" && (
                 <div className="space-y-1.5">
-                  <Label htmlFor="reg-mobile" className="text-xs font-semibold flex items-center gap-1.5">
+                  <Label
+                    htmlFor="reg-mobile"
+                    className="text-xs font-semibold flex items-center gap-1.5"
+                  >
                     <Phone className="h-3.5 w-3.5 text-muted-foreground" />
                     Mobile Number{" "}
                     {fields.mobileNumber === "required" ? (
@@ -352,17 +372,24 @@ export function ExhibitionRegistrationForm({
                     value={formData.mobileNumber}
                     onChange={(e) => handleInputChange("mobileNumber", e.target.value)}
                     disabled={isSubmitting}
-                    className={errors.mobileNumber ? "border-destructive focus-visible:ring-destructive" : ""}
+                    className={
+                      errors.mobileNumber ? "border-destructive focus-visible:ring-destructive" : ""
+                    }
                   />
                   {errors.mobileNumber && (
-                    <p className="text-[11px] font-medium text-destructive">{errors.mobileNumber}</p>
+                    <p className="text-[11px] font-medium text-destructive">
+                      {errors.mobileNumber}
+                    </p>
                   )}
                 </div>
               )}
 
               {fields.emailAddress !== "disabled" && (
                 <div className="space-y-1.5">
-                  <Label htmlFor="reg-email" className="text-xs font-semibold flex items-center gap-1.5">
+                  <Label
+                    htmlFor="reg-email"
+                    className="text-xs font-semibold flex items-center gap-1.5"
+                  >
                     <Mail className="h-3.5 w-3.5 text-muted-foreground" />
                     Email Address{" "}
                     {fields.emailAddress === "required" ? (
@@ -378,10 +405,14 @@ export function ExhibitionRegistrationForm({
                     value={formData.emailAddress}
                     onChange={(e) => handleInputChange("emailAddress", e.target.value)}
                     disabled={isSubmitting}
-                    className={errors.emailAddress ? "border-destructive focus-visible:ring-destructive" : ""}
+                    className={
+                      errors.emailAddress ? "border-destructive focus-visible:ring-destructive" : ""
+                    }
                   />
                   {errors.emailAddress && (
-                    <p className="text-[11px] font-medium text-destructive">{errors.emailAddress}</p>
+                    <p className="text-[11px] font-medium text-destructive">
+                      {errors.emailAddress}
+                    </p>
                   )}
                 </div>
               )}
@@ -391,7 +422,10 @@ export function ExhibitionRegistrationForm({
           {/* Country Selection */}
           {fields.country !== "disabled" && (
             <div className="space-y-1.5">
-              <Label htmlFor="reg-country" className="text-xs font-semibold flex items-center gap-1.5">
+              <Label
+                htmlFor="reg-country"
+                className="text-xs font-semibold flex items-center gap-1.5"
+              >
                 <Globe2 className="h-3.5 w-3.5 text-muted-foreground" />
                 Country{" "}
                 {fields.country === "required" ? (
@@ -470,7 +504,10 @@ export function ExhibitionRegistrationForm({
           {/* Message */}
           {fields.message !== "disabled" && (
             <div className="space-y-1.5 pt-1">
-              <Label htmlFor="reg-message" className="text-xs font-semibold flex items-center gap-1.5">
+              <Label
+                htmlFor="reg-message"
+                className="text-xs font-semibold flex items-center gap-1.5"
+              >
                 <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
                 Message / Requirement{" "}
                 {fields.message === "required" ? (

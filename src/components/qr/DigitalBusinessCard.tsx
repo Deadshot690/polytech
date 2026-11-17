@@ -23,9 +23,14 @@ import { BusinessProfile, downloadVCard } from "@/lib/qr-config";
 interface DigitalBusinessCardProps {
   profile: BusinessProfile;
   isExpanded?: boolean;
+  qrPlacementId?: string;
 }
 
-export function DigitalBusinessCard({ profile, isExpanded = false }: DigitalBusinessCardProps) {
+export function DigitalBusinessCard({
+  profile,
+  isExpanded = false,
+  qrPlacementId,
+}: DigitalBusinessCardProps) {
   const [sharing, setSharing] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 

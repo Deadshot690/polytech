@@ -1,10 +1,11 @@
 import { useState, useMemo } from "react";
-import { Exhibition, QRPlacement, QRPlacementType } from "@/lib/qr-config";
+import { QRPlacement, QRPlacementType } from "@/lib/qr-config";
 import { QRCodeRenderer } from "@/components/qr/QRCodeRenderer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -20,9 +21,18 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
   Plus,
@@ -32,25 +42,17 @@ import {
   Printer,
   ExternalLink,
   Trash2,
-  SlidersHorizontal,
+  Edit2,
+  Search,
+  Filter,
   Check,
-  Eye,
-  Building2,
   Sparkles,
+  MapPin,
+  Globe,
 } from "lucide-react";
 
 interface QRManagementSectionProps {
   placements: QRPlacement[];
-  exhibitions: Exhibition[];
-  placementMetrics: Array<{
-    placementId: string;
-    code: string;
-    scans: number;
-    uniqueVisitors: number;
-    leads: number;
-    conversionRate: number;
-    lastScannedAt?: string;
-  }>;
   onSavePlacement: (placement: QRPlacement) => void;
   onToggleActive: (id: string) => void;
   onDeletePlacement: (id: string) => void;
@@ -65,39 +67,43 @@ const PLACEMENT_TYPES: QRPlacementType[] = [
   "General",
 ];
 
+const TYPE_COLORS: Record<QRPlacementType, string> = {
+  Tabletop: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+  "Stall Backdrop": "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+  "Sample Bag": "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  Brochure: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+  "Executive Lanyard": "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
+  General: "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20",
+};
+
 export function QRManagementSection({
   placements,
-  exhibitions,
-  placementMetrics,
   onSavePlacement,
   onToggleActive,
   onDeletePlacement,
 }: QRManagementSectionProps) {
-  const [selectedExhFilter, setSelectedExhFilter] = useState<string>("all");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [activePrintPlacement, setActivePrintPlacement] = useState<QRPlacement | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingPlacement, setEditingPlacement] = useState<QRPlacement | null>(null);
+  const [deletingPlacementId, setDeletingPlacementId] = useState<string | null>(null);
+  const [printPlacement, setPrintPlacement] = useState<QRPlacement | null>(null);
 
   // New placement form state
-  const [newForm, setNewForm] = useState<{
-    code: string;
-    name: string;
-    exhibitionId: string;
-    locationDescription: string;
-    type: QRPlacementType;
-    targetPath: string;
-  }>({
-    code: "",
+  const [newForm, setNewForm] = useState({
     name: "",
-    exhibitionId: exhibitions[0]?.id || "",
-    locationDescription: "",
-    type: "Tabletop",
-    targetPath: "/qr-code",
+    code: "",
+    type: "Tabletop" as QRPlacementType,
+    destinationUrl: "https://qlumix.com/business-card",
+    description: "",
+    active: true,
   });
 
-  const filteredPlacements = useMemo(() => {
-    if (selectedExhFilter === "all") return placements;
-    return placements.filter((p) => p.exhibitionId === selectedExhFilter);
-  }, [placements, selectedExhFilter]);
+  const isLocalDev =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname.includes("192.168."));
 
   const getTrackingUrl = (placement: QRPlacement) => {
     const origin =
@@ -107,10 +113,44 @@ export function QRManagementSection({
     return `${origin}/r/${placement.code}`;
   };
 
-  const handleCreate = (e: React.FormEvent) => {
+  const getLocalDestinationUrl = (destUrl: string) => {
+    if (!isLocalDev) return destUrl;
+    try {
+      const parsed = new URL(destUrl);
+      return `${window.location.origin}${parsed.pathname}${parsed.search}`;
+    } catch {
+      return destUrl;
+    }
+  };
+
+  const filteredPlacements = useMemo(() => {
+    return placements.filter((p) => {
+      const matchesSearch =
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesType = typeFilter === "all" || p.type === typeFilter;
+      return matchesSearch && matchesType;
+    });
+  }, [placements, searchQuery, typeFilter]);
+
+  const handleNameChange = (val: string) => {
+    const slug = val
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "-")
+      .replace(/-+/g, "-")
+      .slice(0, 16);
+    setNewForm((prev) => ({
+      ...prev,
+      name: val,
+      code: prev.code ? prev.code : slug,
+    }));
+  };
+
+  const handleCreateSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newForm.name.trim() || !newForm.code.trim()) {
-      toast.error("Placement name and unique code are required");
+      toast.error("Please enter a placement name and unique tracking code");
       return;
     }
 
@@ -119,407 +159,683 @@ export function QRManagementSection({
       .trim()
       .replace(/[^a-z0-9_-]/g, "-");
 
-    // Check code duplication
     if (placements.some((p) => p.code.toLowerCase() === cleanCode)) {
-      toast.error(`Code "${cleanCode}" is already in use. Please choose another.`);
+      toast.error(`Code "${cleanCode}" is already in use. Please choose a unique code.`);
       return;
     }
 
     const newPlacement: QRPlacement = {
-      id: `qr-${cleanCode}-${Date.now().toString().slice(-4)}`,
+      id: `qr-${Date.now()}`,
       code: cleanCode,
       name: newForm.name.trim(),
-      exhibitionId: newForm.exhibitionId,
-      locationDescription: newForm.locationDescription.trim() || "Exhibition placement",
       type: newForm.type,
-      targetPath: newForm.targetPath,
-      active: true,
+      destinationUrl: newForm.destinationUrl.trim() || "https://qlumix.com/business-card",
+      description: newForm.description.trim(),
+      active: newForm.active,
       createdAt: new Date().toISOString(),
     };
 
     onSavePlacement(newPlacement);
-    toast.success(`Created QR Placement: ${newPlacement.name}`);
-    setIsCreateModalOpen(false);
+    toast.success(`QR placement "${newPlacement.name}" generated successfully!`);
+    setIsCreateOpen(false);
     setNewForm({
-      code: "",
       name: "",
-      exhibitionId: exhibitions[0]?.id || "",
-      locationDescription: "",
+      code: "",
       type: "Tabletop",
-      targetPath: "/qr-code",
+      destinationUrl: "https://qlumix.com/business-card",
+      description: "",
+      active: true,
     });
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPlacement) return;
+
+    if (!editingPlacement.name.trim()) {
+      toast.error("Placement name is required");
+      return;
+    }
+
+    onSavePlacement(editingPlacement);
+    toast.success(`Updated "${editingPlacement.name}"`);
+    setEditingPlacement(null);
+  };
+
+  const copyUrl = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Tracking URL copied to clipboard!");
+    } catch {
+      toast.error("Failed to copy URL");
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Top Controls Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-4">
+      {/* Top Section Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-display text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
-            <QrCode className="h-5 w-5 text-primary" />
-            QR Placements & Collateral Manager
+          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
+            QR Code Management
           </h2>
-          <p className="text-xs text-muted-foreground">
-            Generate and monitor individual QR codes for tabletop acrylic stands, booth walls,
-            sample bags, and brochures.
+          <p className="mt-1 text-sm text-muted-foreground">
+            Generate, customize, and deploy physical & digital exhibition QR placements.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Exhibition Filter Dropdown */}
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <SlidersHorizontal className="h-3.5 w-3.5" />
-            <select
-              value={selectedExhFilter}
-              onChange={(e) => setSelectedExhFilter(e.target.value)}
-              aria-label="Filter by exhibition"
-              className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs text-foreground focus-visible:outline-none"
-            >
-              <option value="all">All Exhibitions ({placements.length})</option>
-              {exhibitions.map((exh) => (
-                <option key={exh.id} value={exh.id}>
-                  {exh.name}
-                </option>
-              ))}
-            </select>
-          </div>
+        <Button
+          onClick={() => setIsCreateOpen(true)}
+          className="btn-primary rounded-xl font-semibold shadow-md cursor-pointer inline-flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          <span>Generate New QR</span>
+        </Button>
+      </div>
 
-          {/* Create QR Button & Modal */}
-          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="btn-primary rounded-xl text-xs font-semibold gap-1.5">
-                <Plus className="h-4 w-4" />
-                Generate New QR
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-base font-bold">Create Trackable QR Code</DialogTitle>
-                <DialogDescription className="text-xs">
-                  Each QR code receives its own unique redirect tracking URL to measure scans
-                  separately.
-                </DialogDescription>
-              </DialogHeader>
+      {/* Filter & Search Bar */}
+      <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card/60 p-3 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search placements by name, code, or location..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 h-9 text-xs rounded-xl border-border/70 bg-background/80"
+          />
+        </div>
 
-              <form onSubmit={handleCreate} className="space-y-3.5 pt-2">
-                <div className="space-y-1">
-                  <Label htmlFor="qrName" className="text-xs font-semibold">
-                    Placement Name <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="qrName"
-                    placeholder="e.g. VIP Lounge Acrylic Stand"
-                    value={newForm.name}
-                    onChange={(e) => setNewForm((f) => ({ ...f, name: e.target.value }))}
-                    className="text-xs"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <Label htmlFor="qrCode" className="text-xs font-semibold">
-                      Unique Code <span className="text-destructive">*</span>
-                    </Label>
-                    <Input
-                      id="qrCode"
-                      placeholder="e.g. vip-lounge"
-                      value={newForm.code}
-                      onChange={(e) => setNewForm((f) => ({ ...f, code: e.target.value }))}
-                      className="text-xs font-mono"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <Label htmlFor="qrType" className="text-xs font-semibold">
-                      Placement Type
-                    </Label>
-                    <select
-                      id="qrType"
-                      value={newForm.type}
-                      onChange={(e) =>
-                        setNewForm((f) => ({ ...f, type: e.target.value as QRPlacementType }))
-                      }
-                      className="w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs"
-                    >
-                      {PLACEMENT_TYPES.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="qrExhibition" className="text-xs font-semibold">
-                    Assign to Exhibition
-                  </Label>
-                  <select
-                    id="qrExhibition"
-                    value={newForm.exhibitionId}
-                    onChange={(e) => setNewForm((f) => ({ ...f, exhibitionId: e.target.value }))}
-                    className="w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs"
-                  >
-                    {exhibitions.map((exh) => (
-                      <option key={exh.id} value={exh.id}>
-                        {exh.name} ({exh.city})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="qrTarget" className="text-xs font-semibold">
-                    Target Destination
-                  </Label>
-                  <select
-                    id="qrTarget"
-                    value={newForm.targetPath}
-                    onChange={(e) => setNewForm((f) => ({ ...f, targetPath: e.target.value }))}
-                    className="w-full rounded-md border border-input bg-background px-2.5 py-2 text-xs"
-                  >
-                    <option value="/qr-code">Public Portal (Business Card + Form)</option>
-                    <option value="/business-card">Digital Business Card Only</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="qrLoc" className="text-xs font-semibold">
-                    Location Notes
-                  </Label>
-                  <Input
-                    id="qrLoc"
-                    placeholder="e.g. Hall 3, Booth A-42 conference table"
-                    value={newForm.locationDescription}
-                    onChange={(e) =>
-                      setNewForm((f) => ({ ...f, locationDescription: e.target.value }))
-                    }
-                    className="text-xs"
-                  />
-                </div>
-
-                <DialogFooter className="pt-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsCreateModalOpen(false)}
-                    className="text-xs"
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" size="sm" className="btn-primary text-xs">
-                    Create Placement
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+        {/* Type Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          <button
+            type="button"
+            onClick={() => setTypeFilter("all")}
+            className={`rounded-xl px-2.5 py-1 text-xs font-semibold transition-all cursor-pointer ${
+              typeFilter === "all"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+            }`}
+          >
+            All ({placements.length})
+          </button>
+          {PLACEMENT_TYPES.map((type) => {
+            const count = placements.filter((p) => p.type === type).length;
+            if (count === 0 && typeFilter !== type) return null;
+            return (
+              <button
+                key={type}
+                type="button"
+                onClick={() => setTypeFilter(type)}
+                className={`rounded-xl px-2.5 py-1 text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  typeFilter === type
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+              >
+                {type} ({count})
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Grid of QR Placement Cards */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredPlacements.map((placement) => {
-          const exh = exhibitions.find((e) => e.id === placement.exhibitionId);
-          const metrics = placementMetrics.find((m) => m.placementId === placement.id) || {
-            scans: 0,
-            uniqueVisitors: 0,
-            leads: 0,
-            conversionRate: 0,
-          };
-          const trackingUrl = getTrackingUrl(placement);
-
-          return (
-            <Card
-              key={placement.id}
-              className={`shadow-sm flex flex-col justify-between transition-all ${
-                placement.active ? "border-border/90" : "opacity-60 bg-muted/20"
-              }`}
+      {/* QR Placement Cards Grid */}
+      {filteredPlacements.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border/80 p-12 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-muted-foreground mb-3">
+            <QrCode className="h-6 w-6" />
+          </div>
+          <h3 className="font-display text-base font-semibold text-foreground">
+            No QR Placements Found
+          </h3>
+          <p className="mt-1 text-xs text-muted-foreground max-w-sm">
+            {searchQuery || typeFilter !== "all"
+              ? "No placements match your search filters. Try clearing filters or searching for another keyword."
+              : "Generate your first QR code placement for exhibition tabletop acrylics, brochures, or booths."}
+          </p>
+          {(searchQuery || typeFilter !== "all") && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setSearchQuery("");
+                setTypeFilter("all");
+              }}
+              className="mt-4 rounded-xl text-xs"
             >
-              <CardHeader className="p-4 pb-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <Badge variant="outline" className="text-[10px] py-0 px-1.5">
-                        {placement.type}
-                      </Badge>
-                      <span className="font-mono text-[11px] text-muted-foreground font-semibold">
-                        #{placement.code}
+              Clear Filters
+            </Button>
+          )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {filteredPlacements.map((placement) => {
+            const trackingUrl = getTrackingUrl(placement);
+            const colorClass = TYPE_COLORS[placement.type] || TYPE_COLORS.General;
+
+            return (
+              <Card
+                key={placement.id}
+                className={`relative flex flex-col justify-between overflow-hidden rounded-2xl border transition-all duration-200 hover:shadow-lg ${
+                  placement.active
+                    ? "border-border/80 bg-card/90"
+                    : "border-border/40 bg-card/40 opacity-70"
+                }`}
+              >
+                {/* Top Card Bar */}
+                <CardHeader className="p-4 pb-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`inline-flex items-center rounded-lg border px-2 py-0.5 text-[11px] font-semibold ${colorClass}`}
+                    >
+                      {placement.type}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`flex h-2 w-2 rounded-full ${
+                          placement.active ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground"
+                        }`}
+                      />
+                      <Switch
+                        checked={placement.active}
+                        onCheckedChange={() => onToggleActive(placement.id)}
+                        aria-label="Toggle active status"
+                      />
+                    </div>
+                  </div>
+
+                  <CardTitle className="mt-2 text-base font-bold tracking-tight text-foreground line-clamp-1">
+                    {placement.name}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground line-clamp-2 min-h-[32px]">
+                    {placement.description || "Exhibition booth collateral scan placement."}
+                  </CardDescription>
+                </CardHeader>
+
+                {/* QR Code Presentation */}
+                <CardContent className="p-4 pt-1 flex flex-col items-center">
+                  <div className="rounded-xl border border-border/60 bg-white p-3 shadow-inner my-2">
+                    <QRCodeRenderer value={trackingUrl} size={150} />
+                  </div>
+
+                  {/* Destination & Tracking URL Pill */}
+                  <div className="mt-2 w-full rounded-xl border border-border/70 bg-secondary/30 p-2.5 text-center space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                      <span className="font-mono text-primary font-semibold">
+                        /r/{placement.code}
                       </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => copyUrl(trackingUrl)}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-foreground hover:text-primary transition-colors cursor-pointer"
+                          title="Copy Tracking URL"
+                        >
+                          <Copy className="h-3 w-3" />
+                          <span>Copy URL</span>
+                        </button>
+                        <span>•</span>
+                        <a
+                          href={getLocalDestinationUrl(placement.destinationUrl)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline cursor-pointer"
+                          title="Open destination page in new tab"
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                          <span>Visit Card</span>
+                        </a>
+                      </div>
                     </div>
-                    <CardTitle className="mt-1 text-sm font-bold truncate">
-                      {placement.name}
-                    </CardTitle>
-                    <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5 truncate">
-                      <Building2 className="h-3 w-3 text-primary shrink-0" />
-                      <span className="truncate">{exh?.name || "Unassigned"}</span>
-                    </div>
+                    <p
+                      className="truncate text-[10px] text-muted-foreground text-left"
+                      title={placement.destinationUrl}
+                    >
+                      Resolves to:{" "}
+                      {isLocalDev
+                        ? getLocalDestinationUrl(placement.destinationUrl)
+                        : placement.destinationUrl}
+                    </p>
+                  </div>
+                </CardContent>
+
+                {/* Actions Footer */}
+                <CardFooter className="border-t border-border/60 p-3 flex items-center justify-between gap-1 bg-secondary/10">
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPrintPlacement(placement)}
+                      className="h-8 rounded-xl px-2.5 text-xs font-semibold gap-1.5 hover:bg-secondary cursor-pointer"
+                    >
+                      <Printer className="h-3.5 w-3.5 text-primary" />
+                      <span>Print</span>
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditingPlacement(placement)}
+                      className="h-8 rounded-xl px-2.5 text-xs font-semibold gap-1.5 hover:bg-secondary cursor-pointer"
+                    >
+                      <Edit2 className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span>Edit</span>
+                    </Button>
                   </div>
 
-                  {/* Active Toggle Switch */}
-                  <div className="flex items-center gap-1.5 shrink-0">
-                    <Switch
-                      checked={placement.active}
-                      onCheckedChange={() => onToggleActive(placement.id)}
-                      aria-label="Toggle QR Active"
-                    />
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setDeletingPlacementId(placement.id)}
+                      className="h-8 w-8 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
+                      title="Delete Placement"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
                   </div>
-                </div>
-              </CardHeader>
+                </CardFooter>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
-              <CardContent className="p-4 pt-1 flex flex-col items-center">
-                {/* QR Code Container */}
-                <div className="my-2 p-2 rounded-xl border border-border/80 bg-white shadow-sm flex flex-col items-center">
-                  <QRCodeRenderer
-                    value={trackingUrl}
-                    size={140}
-                    title=""
-                    subtitle=""
-                    showActions={false}
-                  />
-                  <div className="mt-1 text-[10px] font-mono text-slate-700 font-semibold truncate max-w-[170px]">
-                    /r/{placement.code}
-                  </div>
-                </div>
+      {/* MODAL 01: Create New QR Code */}
+      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg font-bold flex items-center gap-2">
+              <QrCode className="h-5 w-5 text-primary" />
+              Generate New QR Placement
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Configure a dedicated tracking QR for booth stands, sample bags, or catalogs.
+            </DialogDescription>
+          </DialogHeader>
 
-                {/* Per-Placement Metric Strip */}
-                <div className="mt-2 w-full grid grid-cols-3 gap-1 rounded-xl bg-secondary/50 p-2 text-center text-xs">
-                  <div>
-                    <div className="font-mono font-bold text-foreground">
-                      {metrics.scans.toLocaleString()}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground">Scans</div>
-                  </div>
-                  <div>
-                    <div className="font-mono font-bold text-foreground">
-                      {metrics.uniqueVisitors.toLocaleString()}
-                    </div>
-                    <div className="text-[10px] text-muted-foreground">Unique</div>
-                  </div>
-                  <div>
-                    <div className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                      {metrics.conversionRate}%
-                    </div>
-                    <div className="text-[10px] text-muted-foreground">Conv.</div>
-                  </div>
-                </div>
+          <form onSubmit={handleCreateSubmit} className="space-y-3.5 mt-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="qr-name" className="text-xs font-semibold">
+                Placement Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="qr-name"
+                placeholder="e.g. VIP Lounge Acrylic Standee"
+                value={newForm.name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                className="h-9 text-xs"
+                required
+              />
+            </div>
 
-                <div className="mt-2 text-[10px] text-muted-foreground truncate w-full text-center">
-                  📍 {placement.locationDescription}
-                </div>
-              </CardContent>
-
-              <CardFooter className="p-4 pt-0 border-t border-border/40 flex items-center justify-between gap-1.5">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setActivePrintPlacement(placement)}
-                  className="rounded-lg text-xs h-7 px-2.5 font-medium"
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="qr-type" className="text-xs font-semibold">
+                  Placement Type
+                </Label>
+                <select
+                  id="qr-type"
+                  value={newForm.type}
+                  onChange={(e) =>
+                    setNewForm((prev) => ({ ...prev, type: e.target.value as QRPlacementType }))
+                  }
+                  className="w-full h-9 rounded-md border border-input bg-background px-3 py-1.5 text-xs shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
                 >
-                  <Printer className="mr-1 h-3 w-3" />
-                  Print Stand
-                </Button>
-
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    asChild
-                    className="rounded-lg text-xs h-7 px-2 text-muted-foreground hover:text-foreground"
-                    title="Test Redirect"
-                  >
-                    <a href={trackingUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      if (confirm(`Delete placement "${placement.name}"?`)) {
-                        onDeletePlacement(placement.id);
-                        toast.success("Placement deleted");
-                      }
-                    }}
-                    className="rounded-lg text-xs h-7 px-2 text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
-                </div>
-              </CardFooter>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Standee Print Modal */}
-      {activePrintPlacement && (
-        <Dialog
-          open={!!activePrintPlacement}
-          onOpenChange={(open) => !open && setActivePrintPlacement(null)}
-        >
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-base font-bold">
-                Tabletop Acrylic Stand Layout
-              </DialogTitle>
-              <DialogDescription className="text-xs">
-                Formatted preview ready for printing or exporting as high-res collateral.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="rounded-2xl border-2 border-dashed border-border p-6 bg-gradient-to-b from-card to-secondary/30 text-center my-2">
-              <div className="chip bg-blue-500/10 text-blue-600 border-blue-400/30 text-xs py-0.5 px-3 mb-2">
-                {activePrintPlacement.type} Collateral
+                  {PLACEMENT_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <h3 className="font-display text-xl font-bold text-foreground">Qlumix Polymers</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {exhibitions.find((e) => e.id === activePrintPlacement.exhibitionId)?.name}
-              </p>
 
-              <div className="my-4 flex justify-center">
-                <QRCodeRenderer
-                  value={getTrackingUrl(activePrintPlacement)}
-                  size={170}
-                  showActions={true}
-                  title=""
-                  subtitle=""
+              <div className="space-y-1.5">
+                <Label htmlFor="qr-code" className="text-xs font-semibold">
+                  Tracking Code <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="qr-code"
+                  placeholder="e.g. vip-stand"
+                  value={newForm.code}
+                  onChange={(e) => setNewForm((prev) => ({ ...prev, code: e.target.value }))}
+                  className="h-9 text-xs font-mono"
+                  required
                 />
               </div>
+            </div>
 
-              <div className="font-mono text-xs text-primary font-bold">
-                {getTrackingUrl(activePrintPlacement)}
-              </div>
-              <p className="mt-1 text-[11px] text-muted-foreground">
-                Scan with any smartphone camera to view digital business card & register
+            <div className="space-y-1.5">
+              <Label htmlFor="qr-destination" className="text-xs font-semibold">
+                Destination URL
+              </Label>
+              <Input
+                id="qr-destination"
+                placeholder="https://qlumix.com/business-card"
+                value={newForm.destinationUrl}
+                onChange={(e) =>
+                  setNewForm((prev) => ({ ...prev, destinationUrl: e.target.value }))
+                }
+                className="h-9 text-xs font-mono"
+              />
+              <p className="text-[10px] text-muted-foreground">
+                Visitors scanning the QR code will be redirected to this target address.
               </p>
             </div>
 
-            <DialogFooter>
+            <div className="space-y-1.5">
+              <Label htmlFor="qr-desc" className="text-xs font-semibold">
+                Description / Location Notes
+              </Label>
+              <Textarea
+                id="qr-desc"
+                rows={2}
+                placeholder="e.g. Placed on meeting desk 2 in Hall 3 VIP Pavilion"
+                value={newForm.description}
+                onChange={(e) => setNewForm((prev) => ({ ...prev, description: e.target.value }))}
+                className="text-xs resize-none"
+              />
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl border border-border/70 bg-secondary/30 p-2.5">
+              <div>
+                <Label className="text-xs font-semibold">Active Status</Label>
+                <p className="text-[10px] text-muted-foreground">
+                  Allow redirect and track scans immediately
+                </p>
+              </div>
+              <Switch
+                checked={newForm.active}
+                onCheckedChange={(checked) => setNewForm((prev) => ({ ...prev, active: checked }))}
+              />
+            </div>
+
+            <DialogFooter className="pt-2">
               <Button
+                type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setActivePrintPlacement(null)}
+                onClick={() => setIsCreateOpen(false)}
                 className="text-xs"
               >
-                Close
+                Cancel
               </Button>
-              <Button
-                size="sm"
-                onClick={() => window.print()}
-                className="btn-primary text-xs gap-1.5"
-              >
-                <Printer className="h-3.5 w-3.5" />
-                Print Standee Now
+              <Button type="submit" size="sm" className="btn-primary text-xs font-semibold">
+                Generate QR Placement
               </Button>
             </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* MODAL 02: Edit QR Placement */}
+      <Dialog
+        open={Boolean(editingPlacement)}
+        onOpenChange={(open) => !open && setEditingPlacement(null)}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg font-bold flex items-center gap-2">
+              <Edit2 className="h-5 w-5 text-primary" />
+              Edit QR Placement
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Update placement configuration, destination, or status.
+            </DialogDescription>
+          </DialogHeader>
+
+          {editingPlacement && (
+            <form onSubmit={handleEditSubmit} className="space-y-3.5 mt-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-name" className="text-xs font-semibold">
+                  Placement Name <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="edit-name"
+                  value={editingPlacement.name}
+                  onChange={(e) =>
+                    setEditingPlacement((prev) => (prev ? { ...prev, name: e.target.value } : null))
+                  }
+                  className="h-9 text-xs"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-type" className="text-xs font-semibold">
+                  Placement Type
+                </Label>
+                <select
+                  id="edit-type"
+                  value={editingPlacement.type}
+                  onChange={(e) =>
+                    setEditingPlacement((prev) =>
+                      prev ? { ...prev, type: e.target.value as QRPlacementType } : null,
+                    )
+                  }
+                  className="w-full h-9 rounded-md border border-input bg-background px-3 py-1.5 text-xs shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                >
+                  {PLACEMENT_TYPES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-destination" className="text-xs font-semibold">
+                  Destination URL
+                </Label>
+                <Input
+                  id="edit-destination"
+                  value={editingPlacement.destinationUrl}
+                  onChange={(e) =>
+                    setEditingPlacement((prev) =>
+                      prev ? { ...prev, destinationUrl: e.target.value } : null,
+                    )
+                  }
+                  className="h-9 text-xs font-mono"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="edit-desc" className="text-xs font-semibold">
+                  Description / Location Notes
+                </Label>
+                <Textarea
+                  id="edit-desc"
+                  rows={2}
+                  value={editingPlacement.description}
+                  onChange={(e) =>
+                    setEditingPlacement((prev) =>
+                      prev ? { ...prev, description: e.target.value } : null,
+                    )
+                  }
+                  className="text-xs resize-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-between rounded-xl border border-border/70 bg-secondary/30 p-2.5">
+                <div>
+                  <Label className="text-xs font-semibold">Active Status</Label>
+                  <p className="text-[10px] text-muted-foreground">
+                    Enable or disable this QR placement
+                  </p>
+                </div>
+                <Switch
+                  checked={editingPlacement.active}
+                  onCheckedChange={(checked) =>
+                    setEditingPlacement((prev) => (prev ? { ...prev, active: checked } : null))
+                  }
+                />
+              </div>
+
+              <DialogFooter className="pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setEditingPlacement(null)}
+                  className="text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" size="sm" className="btn-primary text-xs font-semibold">
+                  Save Changes
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* MODAL 03: Print Tabletop Standee / Collateral Card */}
+      <Dialog
+        open={Boolean(printPlacement)}
+        onOpenChange={(open) => !open && setPrintPlacement(null)}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg font-bold flex items-center gap-2">
+              <Printer className="h-5 w-5 text-primary" />
+              Print Tabletop Collateral Stand
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Acrylic tabletop display card formatted for standard exhibition sign stands.
+            </DialogDescription>
+          </DialogHeader>
+
+          {printPlacement && (
+            <div className="space-y-4">
+              {/* Standee Mock Container */}
+              <div
+                id="printable-standee-card"
+                className="rounded-2xl border-2 border-border bg-slate-950 text-white p-6 text-center shadow-2xl relative overflow-hidden"
+              >
+                {/* Decorative border glow */}
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-500" />
+
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <span className="text-[10px] tracking-widest uppercase font-semibold text-cyan-400 bg-cyan-400/10 px-2.5 py-0.5 rounded-full border border-cyan-400/20">
+                    {printPlacement.type} Standee
+                  </span>
+                </div>
+
+                <h3 className="font-display text-xl font-bold tracking-tight text-white">Qlumix</h3>
+                <p className="text-xs text-slate-300 font-medium mt-0.5">
+                  Mohsin Memon • Founder & CEO
+                </p>
+
+                {/* Centered QR */}
+                <div className="my-5 inline-block rounded-2xl bg-white p-4 shadow-xl">
+                  <QRCodeRenderer
+                    value={getTrackingUrl(printPlacement)}
+                    size={200}
+                    showActions={false}
+                  />
+                </div>
+
+                <p className="text-xs font-semibold text-slate-200">Scan with your phone camera</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  Save digital business card & register for polymer samples
+                </p>
+
+                <div className="mt-4 pt-3 border-t border-slate-800 text-[10px] font-mono text-cyan-400/80">
+                  {getTrackingUrl(printPlacement)}
+                </div>
+              </div>
+
+              {/* Action Buttons inside modal */}
+              <div className="flex items-center justify-between gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPrintPlacement(null)}
+                  className="text-xs"
+                >
+                  Close
+                </Button>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const printWindow = window.open("", "_blank");
+                      if (printWindow) {
+                        const standeeHtml =
+                          document.getElementById("printable-standee-card")?.innerHTML;
+                        printWindow.document.write(`
+                          <html>
+                            <head>
+                              <title>Qlumix Tabletop Stand - ${printPlacement.name}</title>
+                              <style>
+                                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #fff; }
+                                .card { width: 340px; padding: 28px; border-radius: 20px; text-align: center; border: 2px solid #0f172a; background: #0f172a; color: #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+                                h3 { margin: 0; font-size: 22px; font-weight: 700; color: #fff; }
+                                p { margin: 4px 0; font-size: 13px; color: #94a3b8; }
+                                .qr-box { background: #fff; padding: 16px; border-radius: 16px; display: inline-block; margin: 16px 0; }
+                                .footer { font-family: monospace; font-size: 11px; color: #38bdf8; margin-top: 12px; }
+                                @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+                              </style>
+                            </head>
+                            <body>
+                              <div class="card">
+                                ${standeeHtml}
+                              </div>
+                              <script>window.onload = function() { window.print(); window.close(); }</script>
+                            </body>
+                          </html>
+                        `);
+                        printWindow.document.close();
+                      }
+                    }}
+                    className="btn-primary text-xs font-semibold gap-1.5 cursor-pointer"
+                  >
+                    <Printer className="h-3.5 w-3.5" />
+                    <span>Print Standee</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Dialog for Deleting Placement */}
+      <AlertDialog
+        open={Boolean(deletingPlacementId)}
+        onOpenChange={(open) => !open && setDeletingPlacementId(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete QR Placement?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this placement? Any printed QR codes pointing to this
+              slug will no longer resolve.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deletingPlacementId) {
+                  onDeletePlacement(deletingPlacementId);
+                  toast.success("QR placement removed");
+                  setDeletingPlacementId(null);
+                }
+              }}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

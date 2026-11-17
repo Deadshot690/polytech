@@ -30,9 +30,9 @@ function polyMul(p1: Uint8Array, p2: Uint8Array): Uint8Array {
 }
 
 function getGeneratorPoly(degree: number): Uint8Array {
-  let g = new Uint8Array([1]);
+  let g: Uint8Array = new Uint8Array([1]);
   for (let i = 0; i < degree; i++) {
-    g = polyMul(g, new Uint8Array([1, GF256_EXP[i]]));
+    g = polyMul(g, new Uint8Array([1, GF256_EXP[i]])) as Uint8Array;
   }
   return g;
 }

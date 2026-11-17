@@ -1,12 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 export type QRPlacementType =
-  | "Tabletop"
-  | "Stall Backdrop"
-  | "Sample Bag"
-  | "Brochure"
-  | "Executive Lanyard"
-  | "General";
+  "Tabletop" | "Stall Backdrop" | "Sample Bag" | "Brochure" | "Executive Lanyard" | "General";
 
 export interface QRPlacement {
   id: string;
@@ -311,7 +306,9 @@ export function useQrAppConfig() {
   }, []);
 
   const addLead = useCallback(
-    (leadData: Omit<ExhibitionLead, "id" | "createdAt">): { success: boolean; lead: ExhibitionLead } => {
+    (
+      leadData: Omit<ExhibitionLead, "id" | "createdAt">,
+    ): { success: boolean; lead: ExhibitionLead } => {
       const newLead: ExhibitionLead = {
         ...leadData,
         id: `LEAD-${Date.now().toString().slice(-4)}`,

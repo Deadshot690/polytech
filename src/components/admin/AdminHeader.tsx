@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import {
-  ExternalLink,
-  RotateCcw,
-  Sun,
-  Moon,
-  Sparkles,
-  QrCode,
-} from "lucide-react";
+import { ExternalLink, RotateCcw, Sun, Moon, Sparkles, QrCode } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -125,12 +118,17 @@ export function AdminHeader({ onResetDefaults }: AdminHeaderProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Reset Configuration to Defaults?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will reset business profile information, QR placements, and form settings to their original demo state. Any custom edits saved in localStorage will be replaced.
+                    This will reset business profile information, QR placements, and form settings
+                    to their original demo state. Any custom edits saved in localStorage will be
+                    replaced.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleReset} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  <AlertDialogAction
+                    onClick={handleReset}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
                     Reset Defaults
                   </AlertDialogAction>
                 </AlertDialogFooter>

@@ -55,10 +55,11 @@ export function QRCodeRenderer({
 
   const copyUrl = async () => {
     try {
-      await navigator.clipboard.writeText(value);
+      const textToCopy = isLocalDev ? targetVisitUrl : value;
+      await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       toast.success("Destination URL copied to clipboard!", {
-        description: value,
+        description: textToCopy,
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
